@@ -16,10 +16,6 @@ class ProductController extends BaseController {
     this.router.get(`${this.path}/`, this.getAllProduct);
   }
 
-  protected initializeServices(): void {
-
-  }
-
   private async getAllProduct(request: express.Request, response: express.Response, next: express.NextFunction): Promise<any> {
     // const res: ResponseData = {
     //   status: ResultCode.SUCCESS,

@@ -1,5 +1,8 @@
 import { ResponseData } from './response'
+import { Token, AccessTokenPayload } from './token'
 
 export {
-  ResponseData
+  ResponseData,
+  Token,
+  AccessTokenPayload,
 }
