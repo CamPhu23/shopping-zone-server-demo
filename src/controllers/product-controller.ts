@@ -16,19 +16,29 @@ class ProductController extends BaseController {
     this.router.get(`${this.path}/`, this.getAllProduct);
   }
 
-  protected initializeServices(): void {
-
-  }
-
   private async getAllProduct(request: express.Request, response: express.Response, next: express.NextFunction): Promise<any> {
     // const res: ResponseData = {
     //   status: ResultCode.SUCCESS,
     //   result: {
     //     mess: "oke"
     //   }
-    // };
-
-    const res = await productService.getAllProduct();
+    // }; 
+    const authenticateToken = request.headers.authorization 
+      ? request.headers.authorization.split(' ')[1]
+      : null;
+      
+    const mockJWT = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTY0ODEwNTQ2NCwiZXhwIjoxNjQ4MTA5MDY0fQ.qWFnJgrWYUY90_8V6osSvuV0qRNhV4SenMVM_KP_Z0s';
+    
+    let res: ResponseData;
+    if (!authenticateToken || authenticateToken != mockJWT) {
+      res = {
+        status: ResultCode.NOT_AUTHORIZE,
+        message: "Token not match"
+      };
+    }
+    else {
+      res = await productService.getAllProduct();
+    }
 
     super.responseJson(response, res);
   }

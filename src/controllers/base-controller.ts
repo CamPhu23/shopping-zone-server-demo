@@ -6,7 +6,6 @@ abstract class BaseController {
   public router = express.Router();
 
   protected abstract initializeRouters(): void;
-  protected abstract initializeServices(): void;
 
   protected async responseJson(response: express.Response, data: ResponseData): Promise<any> {
     switch (data.status) {
@@ -30,6 +29,9 @@ abstract class BaseController {
         response.status(HttpCode.NOT_AUTHORIZED);
         response.json(data.message || 'not authorize');
         break;
+      case ResultCode.FAILED:
+        response.status(HttpCode.SERVER_ERROR);
+        response.json(data.message || 'server run failed')
       default:
         response.status(HttpCode.SERVER_ERROR);
         response.json('server error');

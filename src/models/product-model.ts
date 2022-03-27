@@ -1,5 +1,4 @@
 import { Schema, model, Types } from "mongoose";
-import { BaseModel } from "./base-model";
 
 interface IProduct {
   name: string,
@@ -66,4 +65,4 @@ const schema = new Schema<IProduct>({
   // }
 });
 
-export const ProductModel = model<IProduct>('Product', schema);
+export const ProductModel = model<IProduct>('products', schema);
