@@ -104,12 +104,17 @@ export class AuthService {
             message: "An unknown error occurred",
           });
     } catch (error: any) {
-      const { message } = error || "Undefined error";
+      const { message, code } = error;
 
-      return (this.response = {
-        status: ResultCode.FAILED,
-        message,
-      });
+      return code == 11000 //code = 11000 it's mean mongoose throw duplicated error
+        ? (this.response = {
+            status: ResultCode.BAD_INPUT_DATA,
+            message: "Username or email already exist",
+          })
+        : (this.response = {
+            status: ResultCode.FAILED,
+            message: message || "Undefined error",
+          });
     }
   }
 
