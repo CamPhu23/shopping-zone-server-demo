@@ -30,8 +30,8 @@ export class Client {
     client.username = data.username;
     client.password = data.password;
     client.email = data.email;
-    client.fullname = data.fullname;
-    client.phone = data.phone;
+    client.fullname = data.fullname || "";
+    client.phone = data.phone || "";
     client.address = data.address || "";
     client.isDelete = data.isDelete || false;
     client.refreshToken = data.refreshToken ? data.refreshToken.map((refresh: any): RefreshToken => {

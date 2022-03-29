@@ -10,9 +10,9 @@ const ACCESS_TOKEN_EXPIRED_IN_TIME = 60 * 5; //5 Mins
 const REFRESH_TOKEN_EXPIRED_IN_TIME = 60 * 60 * 24 * 3; //3 Days
 
 export class AuthService {
-  async login(username: string, password: string): Promise<ResponseData> {
-    let res: ResponseData;
+  private response: ResponseData;
 
+  async login(username: string, password: string): Promise<ResponseData> {
     const client = await clientRepository.getClientByUsername(username);
     const isMatch = await bcryptjs.compare(
       password,
@@ -20,7 +20,7 @@ export class AuthService {
     );
 
     if (!client || !isMatch) {
-      return (res = {
+      return (this.response = {
         status: ResultCode.NOT_FOUND,
         message: "Username or password is not correct",
       });
@@ -34,7 +34,7 @@ export class AuthService {
       ? true
       : false;
 
-    return (res = {
+    return (this.response = {
       status: saveTokenResult ? ResultCode.SUCCESS : ResultCode.FAILED,
       result: token,
     });
@@ -42,8 +42,6 @@ export class AuthService {
 
   async refreshToken(refreshToken: string): Promise<ResponseData> {
     try {
-      let res: ResponseData;
-
       const payload = jwt.verify(
         refreshToken,
         process.env.JWT_REFRESH_TOKEN_SECRET_KEY as string
@@ -62,24 +60,56 @@ export class AuthService {
             newToken.refreshToken.token
           );
 
-          return (res = {
+          return (this.response = {
             status: ResultCode.SUCCESS,
             result: newToken,
           });
         }
       }
 
-      return (res = {
+      return (this.response = {
         status: ResultCode.FAILED,
         message: "Invalid refresh token",
       });
     } catch (error: any) {
       const { message } = error || "Undefined error";
 
-      return {
+      return (this.response = {
         status: ResultCode.FAILED,
         message,
-      };
+      });
+    }
+  }
+
+  async register(
+    email: string,
+    username: string,
+    password: string
+  ): Promise<ResponseData> {
+    try {
+      const hashedPassword = await bcryptjs.hash(password, 12);
+      const newClient = await clientRepository.saveClient(
+        username,
+        email,
+        hashedPassword
+      );
+
+      return newClient
+        ? (this.response = {
+            status: ResultCode.SUCCESS,
+            result: this.generateToken(newClient),
+          })
+        : (this.response = {
+            status: ResultCode.FAILED,
+            message: "An unknown error occurred",
+          });
+    } catch (error: any) {
+      const { message } = error || "Undefined error";
+
+      return (this.response = {
+        status: ResultCode.FAILED,
+        message,
+      });
     }
   }
 
@@ -115,6 +145,9 @@ export class AuthService {
           .format(),
       },
       user: {
+        id: client.id,
+        username: client.username,
+        email: client.email,
         permission: "client",
       },
     };

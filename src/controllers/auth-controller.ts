@@ -1,7 +1,5 @@
 import BaseController from "./base-controller";
 import express from "express";
-import { ResponseData } from "../data/models";
-import { ResultCode } from "../utils";
 import { authService } from '../services';
 
 class AuthenticationController extends BaseController {
@@ -29,8 +27,15 @@ class AuthenticationController extends BaseController {
     super.responseJson(response, res);
   }
 
-  private async register(): Promise<any> {
-    throw new Error("Method not implemented.");
+  private async register(
+    request: express.Request,
+    response: express.Response
+  ): Promise<any> {
+    const {email, username, password} = request.body;
+    console.log({email, username, password});
+    
+    const res = await authService.register(email, username, password);
+    super.responseJson(response, res);
   }
 
   private async refreshToken(
