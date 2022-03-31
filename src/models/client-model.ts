@@ -34,9 +34,11 @@ export class Client {
     client.phone = data.phone;
     client.address = data.address || "";
     client.isDelete = data.isDelete || false;
-    client.refreshToken = data.refreshToken ? data.refreshToken.map((refresh: any): RefreshToken => {
-      return RefreshToken.fromData(data.refreshToken)
-    }) : null;
+    client.refreshToken = data.refreshToken
+      ? data.refreshToken.map((refresh: any): RefreshToken => {
+          return RefreshToken.fromData(refresh);
+        })
+      : null;
 
     return client;
   }
@@ -46,25 +48,25 @@ const schema = new Schema<IClient>({
   username: {
     type: String,
     unique: true,
-    required: true
+    required: true,
   },
 
   password: {
     type: String,
-    required: true
+    required: true,
   },
 
   email: {
     type: String,
     unique: true,
-    required: true
+    required: true,
   },
 
   fullname: {
     type: String,
   },
 
-  phone: { 
+  phone: {
     type: String,
   },
 
@@ -74,13 +76,15 @@ const schema = new Schema<IClient>({
 
   isDelete: {
     type: Boolean,
-    default: false
+    default: false,
   },
 
-  refreshToken: [{
-    type: Schema.Types.ObjectId,
-    ref: "refresh-tokens"
-  }]
+  refreshToken: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "refresh-tokens",
+    },
+  ],
 });
 
-export const ClientModel = model<IClient>('clients', schema);
+export const ClientModel = model<IClient>("clients", schema);
