@@ -8,12 +8,19 @@ interface IImage {
   product: Types.ObjectId;
 }
 
+export interface ImageWithoutProduct {
+  id: string;
+  name: string;
+  url: string;
+  publicId: string;
+}
+
 export class Image {
   id: string;
   name: string;
   url: string;
   publicId: string;
-  product: Product | null;
+  product?: Product | null;
 
   static fromData(data: any): Image {
     const image = new Image();
@@ -25,6 +32,15 @@ export class Image {
     image.product = data.product ? Product.fromData(data.product) : null;
 
     return image;
+  }
+
+  static getImageWithoutProduct(image: Image): ImageWithoutProduct {
+    return {
+      id: image.id,
+      name: image.name,
+      url: image.url,
+      publicId: image.publicId,
+    };
   }
 }
 

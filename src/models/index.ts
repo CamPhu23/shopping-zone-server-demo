@@ -1,7 +1,7 @@
 import { Product, ProductModel, ProductIntroduce } from './product-model'
 import {Client, ClientModel} from './client-model';
 import {RefreshToken, RefreshTokenModel} from './refresh-token-model';
-import {Image, ImageModel} from './image-model';
+import {Image, ImageModel, ImageWithoutProduct} from './image-model';
 import {Warehouse, WarehouseModel} from './warehouse-model';
 import {BaseModel} from './base-model';
 
@@ -18,4 +18,5 @@ export {
   ImageModel,
   Warehouse,
   WarehouseModel,
+  ImageWithoutProduct,
 }

@@ -1,5 +1,6 @@
 import { Schema, model, Types } from "mongoose";
 import { Image, Warehouse } from ".";
+import { ImageWithoutProduct } from "./image-model";
 
 interface IProduct {
   name: string;
@@ -18,7 +19,7 @@ export interface ProductIntroduce {
   name: string;
   category: string;
   price: number;
-  image: Image | undefined;
+  image: ImageWithoutProduct;
 }
 
 export class Product {
@@ -29,7 +30,7 @@ export class Product {
   discount: number;
   category: string;
   tags: string[];
-  images: Image[] | null;
+  images: Image[];
   warehouses: Warehouse[] | null;
   isDelete: boolean;
 
@@ -44,16 +45,14 @@ export class Product {
     product.category = data.category;
     product.tags = data.tags;
 
-    product.images = data.images
-      ? data.images.map((image: any): Image => {
-          return Image.fromData(image);
-        })
-      : null;
+    product.images = data.images.map((image: any): Image => {
+      return Image.fromData(image);
+    });
 
     product.warehouses = data.warehouses
       ? data.warehouses.map((warehouse: any): Warehouse => {
-        return Warehouse.fromData(warehouse);
-      })
+          return Warehouse.fromData(warehouse);
+        })
       : null;
 
     product.isDelete = data.isDelete;
@@ -67,7 +66,7 @@ export class Product {
       category: product.category,
       name: product.name,
       price: product.price,
-      image: product.images?.at(0),
+      image: Image.getImageWithoutProduct(product.images[0]),
     };
   }
 }
@@ -107,7 +106,7 @@ const schema = new Schema<IProduct>({
     {
       type: String,
       required: false,
-    }
+    },
   ],
 
   images: [
@@ -123,7 +122,7 @@ const schema = new Schema<IProduct>({
       type: Schema.Types.ObjectId,
       ref: "warehouses",
       required: false,
-    }
+    },
   ],
 });
 

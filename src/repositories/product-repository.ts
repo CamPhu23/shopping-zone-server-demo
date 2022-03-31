@@ -9,11 +9,11 @@ export class ProductRepository extends BaseRepository {
     feature: string[],
     p: number,
     s: number
-  ): Promise<Product[]> {
-    const products = await ProductModel.find({
+  ): Promise<any> {
+    const rawData = await ProductModel.find({
       category: { $in: category },
       tags: { $in: feature },
-      warehouses: { $elemMatch: {$exists: true }}
+      isDelete: false
     })
       .populate("images", "_id name url publicId")
       .populate({
@@ -21,27 +21,17 @@ export class ProductRepository extends BaseRepository {
         match: {
           size: { $in: size },
           color: { $in: color },
+          $where: "this.quantity > this.sold",
         },
         select: "size color quantity sold",
       });
-    // .skip((p - 1) * s);
 
-    return super.parseData(products, Product);
+    const data = rawData.filter((p: any): any => p.warehouses.length > 0);
+    const productList = data.slice((p - 1) * s, p * s);
+
+    return {
+      products: super.parseData(productList, Product),
+      total: data.length
+    };
   }
-
-  // async countTotalProduct(
-  //   category: string[],
-  //   color: string[],
-  //   size: string[],
-  //   feature: string[]
-  // ): Promise<number> {
-  //   const total = await ProductModel.find({
-  //     category: { $in: category },
-  //     color: { $in: color },
-  //     size: { $in: size },
-  //     feature: { $in: feature },
-  //   }).count();
-
-  //   return total || 0;
-  // }
 }
