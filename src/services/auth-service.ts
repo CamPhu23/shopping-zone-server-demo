@@ -118,6 +118,68 @@ export class AuthService {
     }
   }
 
+  // Forgot password function
+  async forgotPassword(email: string): Promise<ResponseData>{
+    const client = await clientRepository.getClientByEmail(email);
+    if(!client){
+      return ( this.response = {
+        status: ResultCode.NOT_FOUND,
+        message: "Email does not exist in the system"
+      })
+    }
+    else{
+      const payload = {
+        email: client.email
+      }
+      // Create a link to reset password
+      const token = jwt.sign(payload, process.env.JWT_RESET_PASSWORD_TOKEN_SECRET_KEY as string, {algorithm: "HS256", expiresIn: 60*10})
+      console.log(token)
+
+      const link = `http://localhost:8000/auth/resetpassword/${token}`
+      console.log(link)
+
+      return( this.response = {
+        status: ResultCode.SUCCESS,
+      })
+    }
+  }
+  async resetPassword(email: string, password: string): Promise<ResponseData>{
+    const hashedPassword = await bcryptjs.hash(password, 12);
+    const newResetpassword = await clientRepository.resetPassword(email, hashedPassword);
+    return newResetpassword
+    ?(this.response = {
+      status: ResultCode.SUCCESS
+    })
+    :(this.response = {
+      status: ResultCode.FAILED,
+      message: "Fail to reset password"   
+    })
+    // try {
+    //   const hashedPassword = await bcryptjs.hash(password, 12);
+    //   const newResetpassword = await clientRepository.resetPassword(email, hashedPassword);
+    //   return newResetpassword
+    //   ?(this.response = {
+    //     status: ResultCode.SUCCESS
+    //   })
+    //   :(this.response = {
+    //     status: ResultCode.FAILED,
+    //     message: "Fail to reset password"   
+    //   })
+    // } catch (error: any) {
+    //     const { message, code } = error;
+
+    //     return code == 11000 //code = 11000 it's mean mongoose throw duplicated error
+    //       ? (this.response = {
+    //           status: ResultCode.BAD_INPUT_DATA,
+    //           message: "Username or email already exist",
+    //         })
+    //       : (this.response = {
+    //           status: ResultCode.FAILED,
+    //           message: message || "Undefined error",
+    //         });
+    // }
+  }
+
   private generateToken(client: Client): Token {
     const accessPayload: AccessTokenPayload = {
       id: client.id,
