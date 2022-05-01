@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import bcryptjs = require("bcryptjs");
 import { Client } from "../models";
 import moment = require("moment");
+import nodemailer = require("nodemailer");
 
 const ACCESS_TOKEN_EXPIRED_IN_TIME = 60 * 5; //5 Mins
 const REFRESH_TOKEN_EXPIRED_IN_TIME = 60 * 60 * 24 * 3; //3 Days
@@ -131,12 +132,40 @@ export class AuthService {
       const payload = {
         email: client.email
       }
-      // Create a link to reset password
-      const token = jwt.sign(payload, process.env.JWT_RESET_PASSWORD_TOKEN_SECRET_KEY as string, {algorithm: "HS256", expiresIn: 60*10})
+      // Create a link to reset password, expirein: 5m
+      const token = jwt.sign(payload, process.env.JWT_RESET_PASSWORD_TOKEN_SECRET_KEY as string, {algorithm: "HS256", expiresIn: 60*5})
       console.log(token)
 
-      const link = `http://localhost:8000/auth/resetpassword/${token}`
-      console.log(link)
+      const reset_password_url = `http://localhost:3000/auth/resetpassword/${token}`
+      console.log(reset_password_url)
+
+      // Create sending reset password link through email
+      // create reusable transporter object using the default SMTP transport
+      let transporter = nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: 'alfredo.barton55@ethereal.email', // generated ethereal user
+          pass: '8k4F6KqRzb8fNAw9zJ', // generated ethereal password
+        },
+      });
+    
+      // send mail with defined transport object
+      let info = await transporter.sendMail({
+        from: '"Huy Phú" <huyphu@gmail.com>', // sender address
+        to: `${client.email}`, // list of receivers
+        subject: "Reset password link", // Subject line
+        html: `
+          <h3>Hello my customer</h3> 
+          <p>It's a link to reset your password:</p> 
+          <b>${reset_password_url}</b>`, // html body
+      });
+        
+      // Preview only available when sending through an Ethereal account
+      console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+      // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+
 
       return( this.response = {
         status: ResultCode.SUCCESS,

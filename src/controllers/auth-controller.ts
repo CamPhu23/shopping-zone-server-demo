@@ -1,7 +1,9 @@
 import BaseController from "./base-controller";
 import express from "express";
 import { authService } from '../services';
-import jwt from "jsonwebtoken"; //Huy import 
+import jwt from "jsonwebtoken"; 
+import { ResultCode } from "../utils";
+import _ from 'lodash';
 
 class AuthenticationController extends BaseController {
   private path = "/auth";
@@ -69,22 +71,52 @@ class AuthenticationController extends BaseController {
     response: express.Response
   ): Promise<any> {
 
-    const {newPassword, re_enterPassword} = request.body
+    const {newPassword} = request.body;
     // Get token of link
-    const {token} = request.params
-    // decode the token
-    const decodedToken = jwt.verify(token, process.env.JWT_RESET_PASSWORD_TOKEN_SECRET_KEY as string)
-    
+    const {token} = request.params;
     // create interface to cast the data type of email to string
     interface JWTData {
       email: string;
     }
-    console.log((decodedToken as JWTData).email)
-    const email = (decodedToken as JWTData).email
-    console.log({newPassword, re_enterPassword})
-    const res = await authService.resetPassword(email, newPassword)
-    super.responseJson(response, res);
-    console.log('Change password successfully')
+    let email = '';
+
+    let error = ''
+    // decode the token
+    jwt.verify(token, process.env.JWT_RESET_PASSWORD_TOKEN_SECRET_KEY as string,
+      async function(err, decodedToken) {
+        if (err) {
+          error = err.name;
+        }
+        if(!err){
+          email = (decodedToken as JWTData).email;
+        }
+      });
+      // 
+      if(!_.isEmpty(error)){
+        console.log(error)
+        return super.responseJson(response, {
+          status: ResultCode.NOT_HAVE_PERMISSION,
+          message: error,
+        })
+      }
+      console.log(email)
+      console.log({newPassword});
+
+      const res = await authService.resetPassword(email, newPassword);
+      return super.responseJson(response, res);
+      console.log('Change password successfully');
+    // console.log(decodedToken)
+    // // create interface to cast the data type of email to string
+    // interface JWTData {
+    //   email: string;
+    // }
+    // console.log((decodedToken as JWTData).email)
+    // const email = (decodedToken as JWTData).email
+    // console.log({newPassword, re_enterPassword})
+
+    // const res = await authService.resetPassword(email, newPassword)
+    // super.responseJson(response, res);
+    // console.log('Change password successfully')
   }
 }
 
