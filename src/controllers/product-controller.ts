@@ -34,6 +34,7 @@ class ProductController extends BaseController {
       color = DefaultValue.DEFAULT_PRODUCT_COLOR,
       size = DefaultValue.DEFAULT_PRODUCT_SIZE,
       feature = DefaultValue.DEFAULT_PRODUCT_FEATURE,
+      search = "",
       p = DefaultValue.DEFAULT_PAGE,
       s = DefaultValue.DEFAULT_SIZE,
     } = request.query;
@@ -43,6 +44,7 @@ class ProductController extends BaseController {
       color.toString(),
       size.toString(),
       feature.toString(),
+      search.toString(),
       parseInt(p.toString()),
       parseInt(s.toString())
     );
