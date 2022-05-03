@@ -6,7 +6,7 @@ interface IWarehouse {
   color: string;
   quantity: number;
   sold: number;
-  product: Types.ObjectId;
+  products: Types.ObjectId;
 }
 
 export class Warehouse {
@@ -15,7 +15,7 @@ export class Warehouse {
   color: string;
   quantity: number;
   sold: number;
-  product: Product | null;
+  products: Product | null;
 
   static fromData(data: any): Warehouse {
     const warehouse = new Warehouse();
@@ -25,7 +25,7 @@ export class Warehouse {
     warehouse.color = data.color;
     warehouse.quantity = data.quantity;
     warehouse.sold = data.sold;
-    warehouse.product = data.product ? Product.fromData(data.product) : null;
+    warehouse.products = data.product ? Product.fromData(data.product) : null;
 
     return warehouse;
   }
@@ -52,7 +52,7 @@ const schema = new Schema<IWarehouse>({
     default: 0,
   },
 
-  product: [
+  products: [
     {
       type: Schema.Types.ObjectId,
       ref: "products",

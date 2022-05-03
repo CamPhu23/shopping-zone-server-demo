@@ -10,8 +10,8 @@ interface IProduct {
   discount: number;
   category: string;
   tags: string[];
-  images: Types.ObjectId;
-  warehouses: Types.ObjectId;
+  images: Types.ObjectId[];
+  warehouses: Types.ObjectId[];
 }
 
 export interface ProductIntroduce {

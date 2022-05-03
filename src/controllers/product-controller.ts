@@ -34,7 +34,7 @@ class ProductController extends BaseController {
       color = DefaultValue.DEFAULT_PRODUCT_COLOR,
       size = DefaultValue.DEFAULT_PRODUCT_SIZE,
       feature = DefaultValue.DEFAULT_PRODUCT_FEATURE,
-      search = "",
+      search = DefaultValue.DEFAULT_PRODUCT_SEARCH,
       p = DefaultValue.DEFAULT_PAGE,
       s = DefaultValue.DEFAULT_SIZE,
     } = request.query;

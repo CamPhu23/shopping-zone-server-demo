@@ -13,7 +13,7 @@ export class ProductRepository extends BaseRepository {
     s: number
   ): Promise<any> {
     let rawData;
-    console.log(search);
+    console.log(category);
     
     if (!_.isEmpty(search)) {
       
@@ -55,7 +55,7 @@ export class ProductRepository extends BaseRepository {
 
     const data = rawData.filter((p: any): any => p.warehouses.length > 0);
     const productList = data.slice((p - 1) * s, p * s);
-    
+
     return {
       products: super.parseData(productList, Product),
       total: data.length
