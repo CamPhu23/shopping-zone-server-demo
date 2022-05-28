@@ -3,6 +3,7 @@ import { ResultCode, DefaultValue } from "../utils";
 import express from "express";
 import { ResponseData } from "../data/models";
 import { productService } from "../services";
+import { Product } from "../models";
 
 class ProductController extends BaseController {
   private path = "/products";
@@ -14,9 +15,10 @@ class ProductController extends BaseController {
 
   protected initializeRouters(): void {
     this.router.get(`${this.path}/`, this.getAllProduct);
+    this.router.get(`${this.path}/:id`, this.getProduct);
   }
 
-  // http://localhost:3000/product?category=ao-thun&color=do&size=S&feature=hang-moi-ve&p=1&s=10
+  // http://localhost:8000/product?category=ao-thun&color=do&size=S&feature=hang-moi-ve&p=1&s=10
   private async getAllProduct(
     request: express.Request,
     response: express.Response,
@@ -34,7 +36,7 @@ class ProductController extends BaseController {
       color = DefaultValue.DEFAULT_PRODUCT_COLOR,
       size = DefaultValue.DEFAULT_PRODUCT_SIZE,
       feature = DefaultValue.DEFAULT_PRODUCT_FEATURE,
-      search = DefaultValue.DEFAULT_PRODUCT_SEARCH,
+      search = "",
       p = DefaultValue.DEFAULT_PAGE,
       s = DefaultValue.DEFAULT_SIZE,
     } = request.query;
@@ -49,6 +51,18 @@ class ProductController extends BaseController {
       parseInt(s.toString())
     );
 
+    super.responseJson(response, res);
+  }
+
+  private async getProduct(
+    request: express.Request,
+    response: express.Response,
+    next: express.NextFunction
+  ): Promise<any>{
+    const {id} = request.params;
+    console.log(id);
+
+    const res = await productService.getProduct(id);
     super.responseJson(response, res);
   }
 }

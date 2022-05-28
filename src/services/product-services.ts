@@ -29,4 +29,14 @@ export class ProductService {
 
     return result;
   }
+  //Chưa viết nếu bị lỗi
+  async getProduct(id: string): Promise<any>{
+    console.log(id);
+    const product = await productRepository.getProduct(id);
+    const result: ResponseData = {
+      status: ResultCode.SUCCESS,
+      result: Product.fromData(product) 
+    };
+    return result;
+  }
 }

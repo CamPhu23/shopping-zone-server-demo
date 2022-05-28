@@ -1,6 +1,10 @@
 import { Schema, model, Types } from "mongoose";
+import { type } from "os";
 import { Image, Warehouse } from ".";
+import { Comment } from "./comment-model";
 import { ImageWithoutProduct } from "./image-model";
+import { Rating } from "./rating-model";
+// import { Rating } from "./rating-model";
 
 interface IProduct {
   name: string;
@@ -12,6 +16,8 @@ interface IProduct {
   tags: string[];
   images: Types.ObjectId[];
   warehouses: Types.ObjectId[];
+  comments: Types.ObjectId[];
+  ratings: Types.ObjectId[];
 }
 
 export interface ProductIntroduce {
@@ -32,6 +38,8 @@ export class Product {
   tags: string[];
   images: Image[];
   warehouses: Warehouse[] | null;
+  comments: Comment[] | null; //comments: Comment[] | null;
+  ratings: Rating[] | null; 
   isDelete: boolean;
 
   static fromData(data: any): Product {
@@ -54,7 +62,22 @@ export class Product {
           return Warehouse.fromData(warehouse);
         })
       : null;
+    
+    // product.comments = data.comments.map((comment: any): Comment => {
+    //   return Comment.fromData(comment);
+    // })
+    product.comments = data.comments
+      ? data.comments.map((comment: any): Comment =>{
+          return Comment.fromData(comment);
+      })
+      : null;
 
+    product.ratings = data.ratings
+    ? data.ratings.map((ratings: any): Rating =>{
+        return Rating.fromData(ratings);
+    })
+    : null;
+  
     product.isDelete = data.isDelete;
 
     return product;
@@ -121,6 +144,22 @@ const schema = new Schema<IProduct>({
     {
       type: Schema.Types.ObjectId,
       ref: "warehouses",
+      required: false,
+    },
+  ],
+
+  comments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "comments",
+      required: false,
+    }
+  ],
+
+  ratings: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "ratings",
       required: false,
     },
   ],
