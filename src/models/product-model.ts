@@ -38,7 +38,7 @@ export class Product {
   tags: string[];
   images: Image[];
   warehouses: Warehouse[] | null;
-  comments: Comment[] | null; //comments: Comment[] | null;
+  comments: Comment[] | null;
   ratings: Rating[] | null; 
   isDelete: boolean;
 
@@ -63,9 +63,6 @@ export class Product {
         })
       : null;
     
-    // product.comments = data.comments.map((comment: any): Comment => {
-    //   return Comment.fromData(comment);
-    // })
     product.comments = data.comments
       ? data.comments.map((comment: any): Comment =>{
           return Comment.fromData(comment);

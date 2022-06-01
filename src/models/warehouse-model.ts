@@ -9,6 +9,11 @@ interface IWarehouse {
   products: Types.ObjectId;
 }
 
+interface WarehouseInProductDetail {
+  info: any[],
+  sold: 0
+};
+
 export class Warehouse {
   id: string;
   size: string;
@@ -28,6 +33,29 @@ export class Warehouse {
     warehouse.products = data.product ? Product.fromData(data.product) : null;
 
     return warehouse;
+  }
+
+  static formatInProductDetail(data: any): WarehouseInProductDetail {
+    let result = {} as WarehouseInProductDetail;
+
+    const info = [
+      { color: 'trang', sizes: [] },
+      { color: 'den', sizes: [] },
+      { color: 'xanh', sizes: [] },
+      { color: 'xam', sizes: [] },
+    ]
+
+    info.forEach(item => {
+      item.sizes = data
+        .filter((warehouse: Warehouse) => warehouse.color == item.color)
+        .map((warehouse: Warehouse) => warehouse.size);
+    })
+    result.sold = data
+      .map((warehouse: Warehouse) => warehouse.sold)
+      .reduce((sum: number, sold: number) => sum + sold, 0);
+    result.info = info.filter((w: any) => w.sizes.length > 0);
+
+    return result;
   }
 }
 
