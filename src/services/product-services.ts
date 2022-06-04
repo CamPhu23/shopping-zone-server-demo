@@ -31,7 +31,7 @@ export class ProductService {
   }
   //Chưa viết nếu bị lỗi
   async getProduct(id: string): Promise<any>{
-    console.log(id);
+    // console.log(id);
     const product = await productRepository.getProduct(id);
     const result: ResponseData = {
       status: ResultCode.SUCCESS,

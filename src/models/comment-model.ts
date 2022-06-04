@@ -5,11 +5,11 @@ import { Client } from "./client-model";
 import { Product } from "./product-model";
 
 interface IComment{
-    name: String; 
-    content: String;
+    name: string; 
+    content: string;
     product: Types.ObjectId;
     replyTo: Types.ObjectId;
-
+    isMarked: boolean;
 }
 
 export class Comment{
@@ -18,15 +18,15 @@ export class Comment{
     content: string;
     product: Product | null;
     replyTo: Comment | null;
+    isMarked: boolean;
 
     static fromData(data: any): Comment{
         const comment = new Comment();
         comment.id = data.id as string;
         comment.name = data.name;
         comment.content = data.content;
-        comment.product = data.product ? Product.fromData(data.product): null;
         comment.replyTo = data.replyTo; //? Comment.fromData(data.replyTo): null;
-
+        comment.isMarked = data.isMarked;
 
         return comment;
     }
@@ -35,7 +35,7 @@ export class Comment{
 const schema = new Schema<IComment>({
     name: {
         type: String,
-        required: false
+        required: true
     },
 
     content: {
@@ -52,9 +52,17 @@ const schema = new Schema<IComment>({
     replyTo: {
         type: Schema.Types.ObjectId, 
         ref: 'comments',
-        required: false
+        default: undefined,
+        required: false,
+        sparse: true
     },
-  
-}, { timestamps: { currentTime: () => Math.floor(Date.now() / 1000) }})
+
+    isMarked: {
+        type: Boolean, 
+        required: false,
+        default: false
+    },
+    
+}, { timestamps: true})
 
 export const CommentModel = model<IComment>("comments", schema);
