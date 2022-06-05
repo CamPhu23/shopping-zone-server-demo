@@ -28,7 +28,7 @@ export class Rating{
         return rating;
     }
 
-    static formatInProductDetail(data: any): RatingResponse {
+    static formatProductDetailRes(data: any): RatingResponse {
         const sum = data.map((r: Rating) => r.rate)
                         .reduce((a: number, b: number) => a + b, 0);
         const avg = (sum / data.length) || 0;

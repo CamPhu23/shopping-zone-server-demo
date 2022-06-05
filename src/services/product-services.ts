@@ -35,8 +35,8 @@ export class ProductService {
   async getProduct(id: string): Promise<any> {
     let product = await productRepository.getProduct(id);
 
-    product.warehouses = Warehouse.formatInProductDetail(product.warehouses);
-    product.ratings = Rating.formatInProductDetail(product.ratings);
+    product.warehouses = Warehouse.formatProductDetailRes(product.warehouses);
+    product.ratings = Rating.formatProductDetailRes(product.ratings);
 
     const result: ResponseData = {
       status: ResultCode.SUCCESS,
