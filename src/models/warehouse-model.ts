@@ -35,7 +35,7 @@ export class Warehouse {
     return warehouse;
   }
 
-  static formatInProductDetail(data: any): WarehouseInProductDetail {
+  static formatProductDetailRes(data: any): WarehouseInProductDetail {
     let result = {} as WarehouseInProductDetail;
 
     const info = [
