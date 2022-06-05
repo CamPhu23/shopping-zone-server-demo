@@ -1,11 +1,12 @@
 import BaseController from "./base-controller";
-import { ResultCode } from '../utils';
+import { ResultCode, DefaultValue } from "../utils";
 import express from "express";
 import { ResponseData } from "../data/models";
 import { productService } from "../services";
+import { Product } from "../models";
 
 class ProductController extends BaseController {
-  private path = '/product';
+  private path = "/products";
 
   constructor() {
     super();
@@ -14,32 +15,54 @@ class ProductController extends BaseController {
 
   protected initializeRouters(): void {
     this.router.get(`${this.path}/`, this.getAllProduct);
+    this.router.get(`${this.path}/:id`, this.getProduct);
   }
 
-  private async getAllProduct(request: express.Request, response: express.Response, next: express.NextFunction): Promise<any> {
+  // http://localhost:8000/product?category=ao-thun&color=do&size=S&feature=hang-moi-ve&p=1&s=10
+  private async getAllProduct(
+    request: express.Request,
+    response: express.Response,
+    next: express.NextFunction
+  ): Promise<any> {
     // const res: ResponseData = {
     //   status: ResultCode.SUCCESS,
     //   result: {
-    //     mess: "oke"
-    //   }
-    // }; 
-    const authenticateToken = request.headers.authorization 
-      ? request.headers.authorization.split(' ')[1]
-      : null;
-      
-    const mockJWT = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTY0ODEwNTQ2NCwiZXhwIjoxNjQ4MTA5MDY0fQ.qWFnJgrWYUY90_8V6osSvuV0qRNhV4SenMVM_KP_Z0s';
-    
-    let res: ResponseData;
-    if (!authenticateToken || authenticateToken != mockJWT) {
-      res = {
-        status: ResultCode.NOT_AUTHORIZE,
-        message: "Token not match"
-      };
-    }
-    else {
-      res = await productService.getAllProduct();
-    }
+    //     mess: "oke",
+    //   },
+    // };
 
+    const {
+      category = DefaultValue.DEFAULT_PRODUCT_CATEGORY,
+      color = DefaultValue.DEFAULT_PRODUCT_COLOR,
+      size = DefaultValue.DEFAULT_PRODUCT_SIZE,
+      feature = DefaultValue.DEFAULT_PRODUCT_FEATURE,
+      search = "",
+      p = DefaultValue.DEFAULT_PAGE,
+      s = DefaultValue.DEFAULT_SIZE,
+    } = request.query;
+
+    const res = await productService.getAllProduct(
+      category.toString(),
+      color.toString(),
+      size.toString(),
+      feature.toString(),
+      search.toString(),
+      parseInt(p.toString()),
+      parseInt(s.toString())
+    );
+
+    super.responseJson(response, res);
+  }
+
+  private async getProduct(
+    request: express.Request,
+    response: express.Response,
+    next: express.NextFunction
+  ): Promise<any>{
+    const {id} = request.params;
+    console.log(id);
+
+    const res = await productService.getProduct(id);
     super.responseJson(response, res);
   }
 }

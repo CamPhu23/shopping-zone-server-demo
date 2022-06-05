@@ -1,50 +1,44 @@
 import { Schema, model, Types } from "mongoose";
 import { RefreshToken } from "./refresh-token-model";
 
-interface IClient {
+interface IAdmin {
   username: string;
   password: string;
   email: string;
   fullname: string;
-  phone: string;
-  address: string;
   isDelete: boolean;
   refreshToken: Types.ObjectId;
 }
 
-export class Client {
+export class Admin {
   id: string;
   username: string;
   password: string;
   email: string;
   fullname: string;
-  phone: string;
-  address: string;
   isDelete: boolean;
   refreshToken: RefreshToken[] | null;
 
-  static fromData(data: any): Client {
-    const client = new Client();
+  static fromData(data: any): Admin {
+    const admin = new Admin();
 
-    client.id = data.id as string;
-    client.username = data.username;
-    client.password = data.password;
-    client.email = data.email;
-    client.fullname = data.fullname;
-    client.phone = data.phone;
-    client.address = data.address || "";
-    client.isDelete = data.isDelete || false;
-    client.refreshToken = data.refreshToken
+    admin.id = data.id as string;
+    admin.username = data.username;
+    admin.password = data.password;
+    admin.email = data.email;
+    admin.fullname = data.fullname;
+    admin.isDelete = data.isDelete || false;
+    admin.refreshToken = data.refreshToken
       ? data.refreshToken.map((refresh: any): RefreshToken => {
           return RefreshToken.fromData(refresh);
         })
       : null;
 
-    return client;
+    return admin;
   }
 }
 
-const schema = new Schema<IClient>({
+const schema = new Schema<IAdmin>({
   username: {
     type: String,
     unique: true,
@@ -66,14 +60,6 @@ const schema = new Schema<IClient>({
     type: String,
   },
 
-  phone: {
-    type: String,
-  },
-
-  address: {
-    type: String,
-  },
-
   isDelete: {
     type: Boolean,
     default: false,
@@ -87,4 +73,4 @@ const schema = new Schema<IClient>({
   ],
 });
 
-export const ClientModel = model<IClient>("clients", schema);
+export const AdminModel = model<IAdmin>("admins", schema);
