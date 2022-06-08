@@ -1,10 +1,8 @@
-import { Schema, model, Types } from "mongoose";
-import { type } from "os";
+import { model, Schema, Types } from "mongoose";
 import { Image, Warehouse } from ".";
 import { Comment } from "./comment-model";
 import { ImageWithoutProduct } from "./image-model";
 import { Rating } from "./rating-model";
-// import { Rating } from "./rating-model";
 
 interface IProduct {
   name: string;

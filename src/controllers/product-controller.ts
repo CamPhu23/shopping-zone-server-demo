@@ -60,7 +60,6 @@ class ProductController extends BaseController {
     next: express.NextFunction
   ): Promise<any>{
     const {id} = request.params;
-    console.log(id);
 
     const res = await productService.getProduct(id);
     super.responseJson(response, res);

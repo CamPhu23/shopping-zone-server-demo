@@ -6,7 +6,7 @@ interface IWarehouse {
   color: string;
   quantity: number;
   sold: number;
-  products: Types.ObjectId;
+  product: Types.ObjectId;
 }
 
 interface WarehouseInProductDetail {
@@ -20,7 +20,7 @@ export class Warehouse {
   color: string;
   quantity: number;
   sold: number;
-  products: Product | null;
+  product: Product | null;
 
   static fromData(data: any): Warehouse {
     const warehouse = new Warehouse();
@@ -30,7 +30,7 @@ export class Warehouse {
     warehouse.color = data.color;
     warehouse.quantity = data.quantity;
     warehouse.sold = data.sold;
-    warehouse.products = data.product ? Product.fromData(data.product) : null;
+    warehouse.product = data.product ? Product.fromData(data.product) : null;
 
     return warehouse;
   }
@@ -80,13 +80,12 @@ const schema = new Schema<IWarehouse>({
     default: 0,
   },
 
-  products: [
+  product:
     {
       type: Schema.Types.ObjectId,
       ref: "products",
       required: true,
     },
-  ],
 });
 
 export const WarehouseModel = model<IWarehouse>("warehouses", schema);
