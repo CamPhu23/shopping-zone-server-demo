@@ -8,6 +8,11 @@ interface Irating{
     client: Types.ObjectId;
 }
 
+interface RatingResponse {
+    stars: number,
+    totalRatings: number
+}
+
 export class Rating{
     id: string;
     rate: number;
@@ -20,6 +25,17 @@ export class Rating{
         rating.product = data.product ? Product.fromData(data.product) : null;
         rating.client = data.client? Client.fromData(data.client) : null;
         return rating;
+    }
+
+    static formatProductDetailRes(data: any): RatingResponse {
+        const sum = data.map((r: Rating) => r.rate)
+                        .reduce((a: number, b: number) => a + b, 0);
+        const avg = (sum / data.length) || 0;
+        
+        return {
+            stars: avg,
+            totalRatings: data.length
+        }
     }
 }
 

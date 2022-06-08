@@ -53,8 +53,7 @@ const schema = new Schema<IComment>({
         type: Schema.Types.ObjectId, 
         ref: 'comments',
         default: undefined,
-        required: false,
-        sparse: true
+        required: false
     },
 
     isMarked: {
