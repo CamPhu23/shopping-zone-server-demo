@@ -25,6 +25,7 @@ export interface ProductIntroduce {
   name: string;
   category: string;
   price: number;
+  rating: number;
   image: ImageWithoutProduct;
 }
 
@@ -53,7 +54,7 @@ export class Product {
     product.category = data.category;
     product.tags = data.tags;
 
-    product.images = data.images.map((image: any): Image => {
+    product.images = data.images?.map((image: any): Image => {
       return Image.fromData(image);
     });
 
@@ -86,6 +87,7 @@ export class Product {
       category: product.category,
       name: product.name,
       price: product.price,
+      rating: Rating.formatProductDetailRes(product.ratings).stars,
       image: Image.getImageWithoutProduct(product.images[0]),
     };
   }
