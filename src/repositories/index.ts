@@ -10,6 +10,7 @@ const refreshTokenRepository = new RefreshTokenRepository();
 const receiptRepository = new ReceiptRepository();
 const warehouseRepository = new WarehouseRepository();
 
+
 export {
   productRepository,
   clientRepository,
