@@ -1,4 +1,5 @@
-import { model, Schema, Types } from "mongoose";
+import { Schema, model, Types } from "mongoose";
+import { type } from "os";
 import { Image, Warehouse } from ".";
 import { Comment } from "./comment-model";
 import { ImageWithoutProduct } from "./image-model";
@@ -23,6 +24,7 @@ export interface ProductIntroduce {
   name: string;
   category: string;
   price: number;
+  rating: number;
   image: ImageWithoutProduct;
 }
 
@@ -51,7 +53,7 @@ export class Product {
     product.category = data.category;
     product.tags = data.tags;
 
-    product.images = data.images.map((image: any): Image => {
+    product.images = data.images?.map((image: any): Image => {
       return Image.fromData(image);
     });
 
@@ -84,6 +86,7 @@ export class Product {
       category: product.category,
       name: product.name,
       price: product.price,
+      rating: Rating.formatProductDetailRes(product.ratings).stars,
       image: Image.getImageWithoutProduct(product.images[0]),
     };
   }

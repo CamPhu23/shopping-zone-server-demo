@@ -15,24 +15,23 @@ export class ProductRepository extends BaseRepository {
     let rawData;
     
     if (!_.isEmpty(search)) {
-      
       rawData = await ProductModel.find({
         category: { $in: category },
         tags: { $in: feature },
         isDelete: false,
-        name: {$regex : search}
+        name: { $regex: search }
       })
         .populate("images", "_id name url publicId")
+        .populate("ratings")
         .populate({
           path: "warehouses",
           match: {
             size: { $in: size },
             color: { $in: color },
-            $where: "this.quantity > this.sold",
+            quantity: { $gt: 0 }
           },
           select: "size color quantity sold",
         });
-  
     } else {
       rawData = await ProductModel.find({
         category: { $in: category },
@@ -40,16 +39,16 @@ export class ProductRepository extends BaseRepository {
         isDelete: false,
       })
         .populate("images", "_id name url publicId")
+        .populate("ratings")
         .populate({
           path: "warehouses",
           match: {
             size: { $in: size },
             color: { $in: color },
-            $where: "this.quantity > this.sold",
+            quantity: { $gt: 0 },
           },
           select: "size color quantity sold",
         });
-  
     }
 
     const data = rawData.filter((p: any): any => p.warehouses.length > 0);

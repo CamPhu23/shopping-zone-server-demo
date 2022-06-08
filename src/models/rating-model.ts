@@ -1,6 +1,7 @@
 import {Schema, Types, model} from 'mongoose'
 import { Client } from './client-model';
 import { Product } from './product-model';
+import _ from 'lodash'
 
 interface Irating{
     rate: number;
@@ -29,7 +30,7 @@ export class Rating{
     }
 
     static formatProductDetailRes(data: any): RatingResponse {
-        const sum = data.map((r: Rating) => r.rate)
+        let sum = data?.map((r: Rating) => r.rate)
                         .reduce((a: number, b: number) => a + b, 0);
         const avg = (sum / data.length) || 0;
         
