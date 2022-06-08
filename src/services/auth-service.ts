@@ -6,7 +6,7 @@ import bcryptjs = require("bcryptjs");
 import { Client } from "../models";
 import moment = require("moment");
 
-const ACCESS_TOKEN_EXPIRED_IN_TIME = 60 * 5; //5 Mins
+const ACCESS_TOKEN_EXPIRED_IN_TIME = 60 * 30; //5 Mins
 const REFRESH_TOKEN_EXPIRED_IN_TIME = 60 * 60 * 24 * 3; //3 Days
 
 export class AuthService {

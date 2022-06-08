@@ -1,8 +1,6 @@
-import { Product, ProductModel, Warehouse } from "../models";
+import _ from "lodash";
+import { Product, ProductModel } from "../models";
 import { BaseRepository } from "./base-repository";
-import _, { forEach } from "lodash";
-import { userInfo } from "os";
-import { ObjectId } from "mongoose";
 
 export class ProductRepository extends BaseRepository {
   async getAllProduct(
@@ -15,10 +13,8 @@ export class ProductRepository extends BaseRepository {
     s: number
   ): Promise<any> {
     let rawData;
-    console.log(category);
-
+    
     if (!_.isEmpty(search)) {
-
       rawData = await ProductModel.find({
         category: { $in: category },
         tags: { $in: feature },
@@ -36,7 +32,6 @@ export class ProductRepository extends BaseRepository {
           },
           select: "size color quantity sold",
         });
-
     } else {
       rawData = await ProductModel.find({
         category: { $in: category },
@@ -54,7 +49,6 @@ export class ProductRepository extends BaseRepository {
           },
           select: "size color quantity sold",
         });
-
     }
 
     const data = rawData.filter((p: any): any => p.warehouses.length > 0);
@@ -66,17 +60,15 @@ export class ProductRepository extends BaseRepository {
     };
   }
 
-  // Get 1 product from mongodb
-  async getProduct(id: string): Promise<any> {
+  // Get product by id
+  async getProduct(id: string): Promise<any>{
     let product = await ProductModel.findOne({ _id: id })
-      .populate("images", "_id name url publicId")
-      .populate("warehouses", "_id size color quantity sold")
-      .populate({
-        path: "comments",
-        select: "content name replyTo"
-      })
-      .populate({ path: "ratings", select: "rate" });
+                                      .populate("images", "_id name url publicId")
+                                      .populate("warehouses", "_id size color quantity sold")
+                                      .populate({ path: "comments", 
+                                                  select: "content name replyTo"})
+                                      .populate({path:"ratings", select: "rate"});
 
-    return product ? Product.fromData(product) : null;
+    return product? Product.fromData(product): null;
   }
 }

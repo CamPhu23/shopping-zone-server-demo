@@ -4,7 +4,6 @@ import { Image, Warehouse } from ".";
 import { Comment } from "./comment-model";
 import { ImageWithoutProduct } from "./image-model";
 import { Rating } from "./rating-model";
-// import { Rating } from "./rating-model";
 
 interface IProduct {
   name: string;
