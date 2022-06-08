@@ -3,6 +3,7 @@ import _ from "lodash";
 import { ResponseData } from "../data/models";
 import { receiptRepository, warehouseRepository } from "../repositories";
 import { ResultCode } from "../utils";
+import { colorConverter } from "../utils/color-converter";
 
 export class PaymentService {
   async makeAPayment(paymentInfo: object, token: string): Promise<ResponseData> {
@@ -29,9 +30,15 @@ export class PaymentService {
     const notExist = await warehouseRepository.checkAreExists((paymentInfo as any).products);
 
     if (!_.isEmpty(notExist) || notExist.length !== 0) {
+      let resError = "";
+      
+      let notEnoughProduct = notExist[0];
+      resError += "Sản phẩm: " + notEnoughProduct.name + ", màu: " + colorConverter(notEnoughProduct.color)
+                + ", size: " +  notEnoughProduct.size + ", không tồn tại";
+      
       return (res = {
         status: ResultCode.BAD_INPUT_DATA,
-        message: "Some products are not exists: " + JSON.stringify(notExist)
+        message: JSON.stringify(resError)
       })
     }
 
@@ -41,11 +48,10 @@ export class PaymentService {
     if (!_.isEmpty(notEnough) || notEnough.length !== 0) {
       let resError = "";
       
-      notEnough.forEach(p => {
-        resError += ", Sản phẩm: " + p.name + ", màu: " + p.color + ", size: " +  p.size + ", chỉ còn: " + p.quantityExist;
-      });
-      resError.substring(2);
-
+      let notEnoughProduct = notEnough[0];
+      resError += "Sản phẩm: " + notEnoughProduct.name + ", màu: " + colorConverter(notEnoughProduct.color)
+                + ", size: " +  notEnoughProduct.size + ", số lượng còn lại: " + notEnoughProduct.quantityExist;
+      
       return (res = {
         status: ResultCode.BAD_INPUT_DATA,
         message: JSON.stringify(resError)
