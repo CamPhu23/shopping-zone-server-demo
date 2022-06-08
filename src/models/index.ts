@@ -4,6 +4,7 @@ import {RefreshToken, RefreshTokenModel} from './refresh-token-model';
 import {Image, ImageModel, ImageWithoutProduct} from './image-model';
 import {Warehouse, WarehouseModel} from './warehouse-model';
 import {BaseModel} from './base-model';
+import {Receipt, ReceiptModel} from './receipt-model';
 
 export {
   BaseModel,
@@ -19,4 +20,6 @@ export {
   Warehouse,
   WarehouseModel,
   ImageWithoutProduct,
+  Receipt,
+  ReceiptModel,
 }

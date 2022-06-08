@@ -1,8 +1,6 @@
-import { Product, ProductModel, Warehouse } from "../models";
+import _ from "lodash";
+import { Product, ProductModel } from "../models";
 import { BaseRepository } from "./base-repository";
-import _, { forEach } from "lodash";
-import { userInfo } from "os";
-import { ObjectId } from "mongoose";
 
 export class ProductRepository extends BaseRepository {
   async getAllProduct(
@@ -15,7 +13,6 @@ export class ProductRepository extends BaseRepository {
     s: number
   ): Promise<any> {
     let rawData;
-    console.log(category);
     
     if (!_.isEmpty(search)) {
       
@@ -64,7 +61,7 @@ export class ProductRepository extends BaseRepository {
     };
   }
 
-  // Get 1 product from mongodb
+  // Get product by id
   async getProduct(id: string): Promise<any>{
     let product = await ProductModel.findOne({ _id: id })
                                       .populate("images", "_id name url publicId")

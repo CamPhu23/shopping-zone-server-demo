@@ -1,8 +1,6 @@
-import BaseController from "./base-controller";
 import express from "express";
-import { ResponseData } from "../data/models";
-import { ResultCode } from "../utils";
 import { authService } from '../services';
+import BaseController from "./base-controller";
 
 class AuthenticationController extends BaseController {
   private path = "/auth";
@@ -23,7 +21,6 @@ class AuthenticationController extends BaseController {
     response: express.Response
   ): Promise<any> {
     const {username, password} = request.body;
-    console.log({username, password});
     
     const res = await authService.login(username, password);
     super.responseJson(response, res);
