@@ -10,6 +10,8 @@ interface IComment{
     product: Types.ObjectId;
     replyTo: Types.ObjectId;
     isMarked: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export class Comment{
@@ -19,6 +21,8 @@ export class Comment{
     product: Product | null;
     replyTo: Comment | null;
     isMarked: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 
     static fromData(data: any): Comment{
         const comment = new Comment();
@@ -27,7 +31,8 @@ export class Comment{
         comment.content = data.content;
         comment.replyTo = data.replyTo; //? Comment.fromData(data.replyTo): null;
         comment.isMarked = data.isMarked;
-
+        comment.createdAt = data.createdAt;
+        comment.updatedAt = data.updatedAt;
         return comment;
     }
 }

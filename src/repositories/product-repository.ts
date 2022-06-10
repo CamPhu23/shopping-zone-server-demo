@@ -69,10 +69,10 @@ export class ProductRepository extends BaseRepository {
     let product = await ProductModel.findOne({ _id: id })
                                       .populate("images", "_id name url publicId")
                                       .populate("warehouses", "_id size color quantity sold")
-                                      .populate({ path: "comments", 
-                                                  select: "content name replyTo"})
+                                      .populate("comments", "content name replyTo isMarked createdAt updatedAt")
                                       .populate({path:"ratings", select: "rate"});
-
+                                      
+                                      
     return product? Product.fromData(product): null;
   }
 }
