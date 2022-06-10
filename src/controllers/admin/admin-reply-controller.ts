@@ -1,6 +1,6 @@
 import express from "express";
-import { commentService} from "../../../services";
-import BaseController from "../../base-controller";
+import { commentService, replyService} from "../../services";
+import BaseController from "../base-controller";
 const mongoose = require('mongoose');
 
 class AdminCommentController extends BaseController {
@@ -13,9 +13,10 @@ class AdminCommentController extends BaseController {
 
   protected initializeRouters(): void {
     this.router.post(`${this.path}/admin/addreply`, this.addReplies);
-    this.router.delete(`${this.path}/admin/deletecomment`, this.deleteComment);
-    this.router.delete(`${this.path}/admin/deletecreply`, this.deleteReply);
-    this.router.put(`${this.path}/admin/editcomment`, this.editComment);
+    this.router.post(`${this.path}/admin/deletecreply`, this.deleteReply);
+    this.router.post(`${this.path}/admin/editreply`, this.editReply);
+    this.router.post(`${this.path}/admin/deletecomment`, this.deleteComment);
+
   }
 
   private async addReplies(
@@ -26,20 +27,9 @@ class AdminCommentController extends BaseController {
     const name = 'Admin'
     // convert string to ObjectId types
     let product = mongoose.Types.ObjectId(productID)
-    const res = await commentService.addReply(name, content, product, replyTo);
-    console.log(res)
+    const res = await replyService.addReply(name, content, product, replyTo);
+    // console.log(res)
     super.responseJson(response, res);
-  }
-
-
-  private async deleteComment(
-    request: express.Request,
-    response: express.Response
-  ): Promise<any> {
-    const {commentID, replyID, productID} = request.body
-    const res = await commentService.deleteComment(commentID, replyID, productID);
-    console.log(res)
-    super.responseJson(response, res)
   }
 
   private async deleteReply(
@@ -47,20 +37,30 @@ class AdminCommentController extends BaseController {
     response: express.Response
   ): Promise<any> {
     const {commentID, replyID, productID} = request.body
-    const res = await commentService.deleteReply(commentID, replyID, productID);
-    console.log(res)
+    const res = await replyService.deleteReply(commentID, replyID, productID);
+    // console.log(res)
     super.responseJson(response, res)
   }
 
-  private async editComment(
+  private async editReply(
     request: express.Request,
     response: express.Response
   ): Promise<any>{
     const {commentID, name, content} = request.body
     // console.log("comment id: ", commentID)
     // console.log({name, content})
-    const res = await commentService.editComment(commentID, name, content);
-    console.log(res)
+    const res = await replyService.editReply(commentID, name, content);
+    // console.log(res)
+    super.responseJson(response, res)
+  }
+
+  private async deleteComment(
+    request: express.Request,
+    response: express.Response
+  ): Promise<any> {
+    const {commentID, replyID, productID} = request.body
+    const res = await commentService.deleteComment(commentID, replyID, productID);
+    // console.log(res)
     super.responseJson(response, res)
   }
 }

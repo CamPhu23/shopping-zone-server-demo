@@ -1,6 +1,6 @@
 import express from "express";
-import { commentService } from "../../services";
-import BaseController from "../base-controller";
+import { commentService } from "../services";
+import BaseController from "./base-controller";
 const mongoose = require('mongoose');
 
 class CommentController extends BaseController {
@@ -19,12 +19,12 @@ class CommentController extends BaseController {
     request: express.Request,
     response: express.Response
   ): Promise<any> {
-    const {name, content, productID} = request.body;
+    const {nameOfCustomer, content, productID} = request.body;
     const replyTo = null;
     // convert string to ObjectId types
     let product_id = mongoose.Types.ObjectId(productID)
     
-    const res = await commentService.addComment(name, content, product_id, replyTo);
+    const res = await commentService.addComment(nameOfCustomer, content, product_id, replyTo);
     console.log(res)
     super.responseJson(response, res);
 
