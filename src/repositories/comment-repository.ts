@@ -17,13 +17,7 @@ export class CommentRepository extends BaseRepository {
     await ProductModel.findByIdAndUpdate(product, {$push: {comments: newCommentID}})
 
 
-    return savecomment ? Comment.fromData({
-        id: savecomment.id,
-        name: savecomment.name,
-        content: savecomment.content,
-        product: savecomment.product,
-        replyTo: savecomment.replyTo
-      }) : null;
+    return savecomment ? Comment.fromData(savecomment) : null;
   }
 
   async saveReply(
@@ -32,21 +26,15 @@ export class CommentRepository extends BaseRepository {
     product: string, 
     replyTo: string | null ): Promise<Comment | null> {
   // add new comment
-  const savecomment = await CommentModel.create({ name, content, product, replyTo});
+  const savereply = await CommentModel.create({ name, content, product, replyTo});
 
   // Push id of new comment into product (references)
-  const newCommentID = savecomment._id
+  const newCommentID = savereply._id
   await ProductModel.findByIdAndUpdate(product, {$push: {comments: newCommentID}})
   // Mark isMarked: true after reply
   await CommentModel.findByIdAndUpdate(replyTo, {$set: {isMarked: true}})
 
-  return savecomment ? Comment.fromData({
-      id: savecomment.id,
-      name: savecomment.name,
-      content: savecomment.content,
-      product: savecomment.product,
-      replyTo: savecomment.replyTo
-    }) : null;
+  return savereply ? Comment.fromData(savereply) : null;
   }
 
   async deleteComment(commentID: string, replyID: string, product: string): Promise<Comment| null>{
@@ -64,23 +52,19 @@ export class CommentRepository extends BaseRepository {
 
   async deleteReply(commentID: string, id: string, product: string): Promise<Comment| null>{
     // delete comment in Comment document
-    const deletedComment = await CommentModel.findOneAndDelete({"_id": id})
+    const deletedReply = await CommentModel.findOneAndDelete({"_id": id})
     // delete id comment reference in Product document
     await ProductModel.findByIdAndUpdate(product, {$pull: {comments: id}})
 
     // If delete reply, then isMarked in comment should be true
     await CommentModel.findByIdAndUpdate(commentID, {$set: {isMarked: false}})
 
-    return deletedComment? Comment.fromData(deletedComment): null
+    return deletedReply? Comment.fromData(deletedReply): null
   }
 
   async editComment(id: string, name: string, content: string): Promise<Comment | null>{
     const editComment = await CommentModel.findByIdAndUpdate(id, {name: name, content: content});
-    return editComment? Comment.fromData({
-      id: editComment.id,
-      name: editComment.name,
-      content: editComment.content
-  }): null
+    return editComment? Comment.fromData(editComment): null
   }
   
 }

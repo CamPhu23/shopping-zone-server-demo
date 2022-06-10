@@ -12,10 +12,10 @@ export class CommentService {
                 result: addComment
             })
             
-        } catch (error) {
+        } catch (error: any) {
             return (this.response = {
                 status: ResultCode.FAILED,
-                message: "Comment/Reply fail"
+                message: error.message || ''
             })
         }
     }
@@ -25,21 +25,16 @@ export class CommentService {
     async deleteComment(commentID: string, replyID: string, product: string): Promise<any>{
         try {
             const deletedComment = await commentRepository.deleteComment(commentID, replyID, product)
-            return deletedComment
-            ? (
-                this.response = {
-                    status: ResultCode.SUCCESS,
-                    message: "Delete comment/reply successfully"
-                }
-            )
-            : (
-                this.response = {
-                    status: ResultCode.FAILED,
-                    message: "Delete comment/reply fail"
-                }
-            )
-        } catch (error) {
-            console.log(error)
+            return (this.response = {
+                status: ResultCode.SUCCESS,
+                result: deletedComment
+            })
+            
+        } catch (error: any) {
+            return (this.response = {
+                status: ResultCode.FAILED,
+                message: error.message || ''
+            })
         }
     }
 

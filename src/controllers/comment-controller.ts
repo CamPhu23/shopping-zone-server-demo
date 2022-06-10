@@ -25,7 +25,7 @@ class CommentController extends BaseController {
     let product_id = mongoose.Types.ObjectId(productID)
     
     const res = await commentService.addComment(nameOfCustomer, content, product_id, replyTo);
-    console.log(res)
+    // console.log(res)
     super.responseJson(response, res);
 
   }
