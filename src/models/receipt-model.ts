@@ -1,4 +1,5 @@
 import { model, Schema, Types } from "mongoose";
+import { Client } from "./client-model";
 
 interface IReceipt {
   fullname: string;
@@ -14,7 +15,7 @@ interface IReceipt {
   shippingCost: number;
   totalDiscount: number;
   totalBill: number;
-  account: Types.ObjectId;
+  client: Types.ObjectId;
 }
 
 export class ReceiptProduct {
@@ -51,12 +52,12 @@ export class Receipt {
   cardNumber: string;
   cardEnddate: string;
   cardCVV: string;
-  products: Types.ObjectId[];
+  products: ReceiptProduct[];
   totalPay: number;
   shippingCost: number;
   totalDiscount: number;
   totalBill: number;
-  account: Types.ObjectId;
+  client: Client;
 
   static fromData(data: any): Receipt {
     const receipt = new Receipt();
@@ -74,9 +75,10 @@ export class Receipt {
     receipt.shippingCost = data.shippingCost;
     receipt.totalDiscount = data.totalDiscount;
     receipt.totalBill = data.totalBill;
+    receipt.client = Client.fromData(data.client) || null;
 
-    receipt.products = data.products.map((image: any): ReceiptProduct => {
-      return ReceiptProduct.fromData(image);
+    receipt.products = data.products.map((product: any): ReceiptProduct => {
+      return ReceiptProduct.fromData(product);
     });
 
     return receipt;
@@ -151,9 +153,9 @@ const schema = new Schema<IReceipt>({
     required: true,
   },
 
-  account: {
+  client: {
     type: Schema.Types.ObjectId,
-    ref: "client",
+    ref: "clients",
     required: true
   }
 });
