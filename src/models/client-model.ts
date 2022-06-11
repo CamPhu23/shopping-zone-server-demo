@@ -32,7 +32,7 @@ export class Client {
     client.email = data.email;
     client.fullname = data.fullname;
     client.phone = data.phone;
-    client.address = data.address || "";
+    client.address = data.address;
     client.isDelete = data.isDelete || false;
     client.refreshToken = data.refreshToken
       ? data.refreshToken.map((refresh: any): RefreshToken => {
@@ -64,14 +64,17 @@ const schema = new Schema<IClient>({
 
   fullname: {
     type: String,
+    required: false
   },
 
   phone: {
     type: String,
+    required: false
   },
 
   address: {
     type: String,
+    required: false
   },
 
   isDelete: {

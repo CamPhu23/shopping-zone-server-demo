@@ -11,10 +11,12 @@ const receiptRepository = new ReceiptRepository();
 const warehouseRepository = new WarehouseRepository();
 
 
+
 export {
   productRepository,
   clientRepository,
   refreshTokenRepository,
   receiptRepository,
   warehouseRepository,
+
 };
