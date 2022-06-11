@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import _ from "lodash";
 import { ResponseData } from "../data/models";
-import { receiptRepository, warehouseRepository } from "../repositories";
+import { clientRepository, receiptRepository, warehouseRepository } from "../repositories";
 import { ResultCode } from "../utils";
 import { colorConverter } from "../utils/color-converter";
 
@@ -31,11 +31,11 @@ export class PaymentService {
 
     if (!_.isEmpty(notExist) || notExist.length !== 0) {
       let resError = "";
-      
+
       let notEnoughProduct = notExist[0];
       resError += "Sản phẩm: " + notEnoughProduct.name + ", màu: " + colorConverter(notEnoughProduct.color)
-                + ", size: " +  notEnoughProduct.size + ", không tồn tại";
-      
+        + ", size: " + notEnoughProduct.size + ", không tồn tại";
+
       return (res = {
         status: ResultCode.BAD_INPUT_DATA,
         message: JSON.stringify(resError)
@@ -47,11 +47,11 @@ export class PaymentService {
 
     if (!_.isEmpty(notEnough) || notEnough.length !== 0) {
       let resError = "";
-      
+
       let notEnoughProduct = notEnough[0];
       resError += "Sản phẩm: " + notEnoughProduct.name + ", màu: " + colorConverter(notEnoughProduct.color)
-                + ", size: " +  notEnoughProduct.size + ", số lượng còn lại: " + notEnoughProduct.quantityExist;
-      
+        + ", size: " + notEnoughProduct.size + ", số lượng còn lại: " + notEnoughProduct.quantityExist;
+
       return (res = {
         status: ResultCode.BAD_INPUT_DATA,
         message: JSON.stringify(resError)
@@ -60,8 +60,9 @@ export class PaymentService {
 
     // save receipt and update quantity in warehoust
     warehouseRepository.updateQuantity((paymentInfo as any).products);
-    (paymentInfo as any).account = account.id;
+    (paymentInfo as any).client = account.id;
     const newReceipt = await receiptRepository.saveReceipt(paymentInfo);
+    clientRepository.saveReceipt(newReceipt.id, account.id);
 
     return (res = {
       status: ResultCode.SUCCESS,
