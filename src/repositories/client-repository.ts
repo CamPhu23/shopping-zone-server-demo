@@ -19,4 +19,14 @@ export class ClientRepository extends BaseRepository {
       address: updateInforUser.address
     }) : null;
   };
+
+  async getClientById(id: string): Promise<Client | null> {
+    const client = await ClientModel.findById(id);
+    return client ? Client.fromData({
+      fullname: client.fullname,
+      email: client.email,
+      phone: client.phone,
+      address: client.address   
+  }) : null;
+  };
 }
