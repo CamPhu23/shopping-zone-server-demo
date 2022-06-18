@@ -3,6 +3,11 @@ import { Product, ProductModel } from "../models";
 import { BaseRepository } from "./base-repository";
 
 export class ProductRepository extends BaseRepository {
+  async getAllProducts(): Promise<any> {
+    return await ProductModel
+      .find({ isDelete: false }, "id name price discount category tags");
+  }
+
   async getAllProduct(
     category: string[],
     color: string[],
@@ -13,7 +18,7 @@ export class ProductRepository extends BaseRepository {
     s: number
   ): Promise<any> {
     let rawData;
-    
+
     if (!_.isEmpty(search)) {
       rawData = await ProductModel.find({
         category: { $in: category },
@@ -61,14 +66,27 @@ export class ProductRepository extends BaseRepository {
   }
 
   // Get product by id
-  async getProduct(id: string): Promise<any>{
+  async getProduct(id: string): Promise<any> {
     let product = await ProductModel.findOne({ _id: id })
-                                      .populate("images", "_id name url publicId")
-                                      .populate("warehouses", "_id size color quantity sold")
-                                      .populate({ path: "comments", 
-                                                  select: "content name replyTo"})
-                                      .populate({path:"ratings", select: "rate"});
+      .populate("images", "_id name url publicId")
+      .populate("warehouses", "_id size color quantity sold")
+      .populate({
+        path: "comments",
+        select: "content name replyTo"
+      })
+      .populate({ path: "ratings", select: "rate" });
 
-    return product? Product.fromData(product): null;
+    return product ? Product.fromData(product) : null;
+  }
+
+  async countAll(): Promise<Number | 0> {
+    return await ProductModel.countDocuments({});
+  }
+
+  async saveProduct(product: Product): Promise<Product | any> {
+    let newProduct = new ProductModel(product);
+    await newProduct.save();
+
+    return newProduct;
   }
 }
