@@ -12,4 +12,8 @@ export class ClientRepository extends BaseRepository {
       { $push: { receipts: newReceiptId } },
       { new: true }, (err, product) => { });
   };
+  
+  async countAll(): Promise<Number | 0> {
+    return await ClientModel.countDocuments({});
+  }
 }
