@@ -1,4 +1,4 @@
-import { Client, ClientModel } from "../models";
+import { Client, ClientModel, Receipt } from "../models";
 import { BaseRepository } from "./base-repository";
 
 export class ClientRepository extends BaseRepository {
@@ -10,4 +10,10 @@ export class ClientRepository extends BaseRepository {
   async countAll(): Promise<Number | 0> {
     return await ClientModel.countDocuments({});
   }
+
+  saveReceipt(newReceiptId: Receipt, id: string): void {
+    ClientModel.findOneAndUpdate({ "_id": id },
+      { $push: { receipts: newReceiptId } },
+      { new: true }, (err, product) => { });
+  };
 }

@@ -15,7 +15,6 @@ export class WarehouseRepository extends BaseRepository {
         { $inc: { "quantity": -p.quantity, "sold": p.quantity } },
         { new: true }, (err, product) => { });
     }
-
   }
 
   async checkEnoughQuantity(products: ReceiptProduct[]): Promise<any[]> {
