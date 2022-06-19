@@ -9,4 +9,8 @@ export class ReceiptRepository extends BaseRepository {
 
     return newReceipt;
   }
+
+  async countAll(): Promise<Number | 0> {
+    return await ReceiptModel.countDocuments({});
+  }
 }
