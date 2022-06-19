@@ -16,6 +16,18 @@ export class ImageRepository extends BaseRepository {
   };
 
   updateProductInImage(images: Image[], product: Product): void {
-    ImageModel.updateMany({ id: {$in: images} }, { product }, (err: any) => {})
+    ImageModel.updateMany({ _id: { $in: images } }, { product: product }, (err: any) => { })
+  }
+
+  async findImages(imageIDs: string[]): Promise<Image[] | []> {
+    return ImageModel.find({ "_id": { $in: imageIDs } });
+  };
+
+  deleteImages(ids: string[]): void {
+    ImageModel.deleteMany({ _id: { $in: ids } });
+  }
+
+  deleteImagesByProductID(productID: string): void {
+    ImageModel.deleteMany({ "product": { _id: productID } });
   }
 }

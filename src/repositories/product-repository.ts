@@ -67,7 +67,7 @@ export class ProductRepository extends BaseRepository {
 
   // Get product by id
   async getProduct(id: string): Promise<any> {
-    let product = await ProductModel.findOne({ _id: id })
+    let product = await ProductModel.findOne({ _id: id, isDelete: false })
       .populate("images", "_id name url publicId")
       .populate("warehouses", "_id size color quantity sold")
       .populate({
@@ -79,10 +79,6 @@ export class ProductRepository extends BaseRepository {
     return product ? Product.fromData(product) : null;
   }
 
-  async countAll(): Promise<Number | 0> {
-    return await ProductModel.countDocuments({});
-  }
-
   async saveProduct(product: Product): Promise<Product | any> {
     let newProduct = new ProductModel(product);
     await newProduct.save();
@@ -92,5 +88,47 @@ export class ProductRepository extends BaseRepository {
 
   async countAll(): Promise<Number | 0> {
     return await ProductModel.countDocuments({});
+  }
+
+  async deleteProduct(id: string): Promise<Product | any> {
+    let deletedProduct = await ProductModel.findByIdAndUpdate({ _id: id },
+      { $set: { isDelete: true } }, { new: true }).exec();
+
+    return Product.fromData(deletedProduct);
+  }
+
+  async updateProduct(product: any): Promise<Product | any> {
+    let newProduct: any;
+
+    // only push new images
+    ProductModel.findOneAndUpdate(
+      { _id: product.id },
+      {
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        discount: product.discount,
+        tags: product.tags,
+        category: product.category,
+        $push: { images: product.images },
+      },
+      { new: true }, (err, product) => {
+        console.log(err);
+      }
+    );
+
+    // delete images (because push and pull 1 property => conflict)
+    ProductModel.findOneAndUpdate(
+      { _id: product.id },
+      {
+        $pullAll: { images: product.deletedImages }
+      },
+      { new: true }, (err, product) => {
+        console.log(err);
+        newProduct = product;
+      }
+    );
+
+    return newProduct;
   }
 }
