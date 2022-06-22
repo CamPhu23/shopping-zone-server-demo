@@ -17,6 +17,8 @@ interface IProduct {
   warehouses: Types.ObjectId[];
   comments: Types.ObjectId[];
   ratings: Types.ObjectId[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface ProductIntroduce {
@@ -39,8 +41,10 @@ export class Product {
   images: Image[];
   warehouses: Warehouse[] | null;
   comments: Comment[] | null;
-  ratings: Rating[] | null; 
+  ratings: Rating[] | null;
   isDelete: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 
   static fromData(data: any): Product {
     const product = new Product();
@@ -52,6 +56,8 @@ export class Product {
     product.discount = data.discount;
     product.category = data.category;
     product.tags = data.tags;
+    product.createdAt = data.createdAt;
+    product.updatedAt = data.updatedAt;
 
     product.images = data.images?.map((image: any): Image => {
       return Image.fromData(image);
@@ -59,22 +65,22 @@ export class Product {
 
     product.warehouses = data.warehouses
       ? data.warehouses.map((warehouse: any): Warehouse => {
-          return Warehouse.fromData(warehouse);
-        })
+        return Warehouse.fromData(warehouse);
+      })
       : null;
-    
+
     product.comments = data.comments
-      ? data.comments.map((comment: any): Comment =>{
-          return Comment.fromData(comment);
+      ? data.comments.map((comment: any): Comment => {
+        return Comment.fromData(comment);
       })
       : null;
 
     product.ratings = data.ratings
-    ? data.ratings.map((ratings: any): Rating =>{
+      ? data.ratings.map((ratings: any): Rating => {
         return Rating.fromData(ratings);
-    })
-    : null;
-  
+      })
+      : null;
+
     product.isDelete = data.isDelete;
 
     return product;
@@ -161,6 +167,6 @@ const schema = new Schema<IProduct>({
       required: false,
     },
   ],
-});
+}, { timestamps: true});
 
 export const ProductModel = model<IProduct>("products", schema);

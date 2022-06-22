@@ -1,7 +1,6 @@
 import express from "express";
 import { ResponseData } from "../../data/models";
-import { adminAuthService, adminStatisticController } from '../../services';
-import { AdminStatisticsService } from "../../services/admin/admin-statistics-service";
+import { adminAuthService, adminStatisticService } from '../../services';
 import { ResultCode } from "../../utils";
 import BaseController from "../base-controller";
 
@@ -24,7 +23,7 @@ class AdminStatsticController extends BaseController {
     let res: ResponseData;
     
     try {
-      res = await adminStatisticController.getReceiptsClientsProductsStatistic();
+      res = await adminStatisticService.getReceiptsClientsProductsStatistic();
     }
     catch (e) {
       res = {

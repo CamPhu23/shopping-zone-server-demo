@@ -24,12 +24,6 @@ class ProductController extends BaseController {
     response: express.Response,
     next: express.NextFunction
   ): Promise<any> {
-    // const res: ResponseData = {
-    //   status: ResultCode.SUCCESS,
-    //   result: {
-    //     mess: "oke",
-    //   },
-    // };
 
     const {
       category = DefaultValue.DEFAULT_PRODUCT_CATEGORY,
