@@ -11,13 +11,9 @@ export class ClientRepository extends BaseRepository {
     return await ClientModel.countDocuments({});
   }
 
-  saveReceipt(newReceiptId: Receipt, id: string): void {
+  async saveReceipt(newReceiptId: Receipt, id: string): Promise<any> {
     ClientModel.findOneAndUpdate({ "_id": id },
       { $push: { receipts: newReceiptId } },
       { new: true }, (err, product) => { });
   };
-  
-  async countAll(): Promise<Number | 0> {
-    return await ClientModel.countDocuments({});
-  }
 }

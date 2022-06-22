@@ -27,9 +27,10 @@ export class ReceiptRepository extends BaseRepository {
     return receipt;
   }
 
-  saveReceipt(receipt: object): any {
+  async saveReceipt(receipt: any): Promise<any> {
+    receipt.status = "Đang xử lý";
     var newReceipt = new ReceiptModel(receipt);
-    newReceipt.save();
+    await newReceipt.save();
 
     return newReceipt;
   }
