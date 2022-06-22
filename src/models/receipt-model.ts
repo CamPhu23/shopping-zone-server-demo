@@ -16,6 +16,10 @@ interface IReceipt {
   totalDiscount: number;
   totalBill: number;
   client: Types.ObjectId;
+  status: string;
+  deliveryAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export class ReceiptProduct {
@@ -58,6 +62,10 @@ export class Receipt {
   totalDiscount: number;
   totalBill: number;
   client: Client;
+  status: string;
+  deliveryAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
 
   static fromData(data: any): Receipt {
     const receipt = new Receipt();
@@ -76,6 +84,10 @@ export class Receipt {
     receipt.totalDiscount = data.totalDiscount;
     receipt.totalBill = data.totalBill;
     receipt.client = Client.fromData(data.client) || null;
+    receipt.status = data.status
+    receipt.deliveryAt = data.deliveryAt;
+    receipt.createdAt = data.createdAt;
+    receipt.updatedAt = data.updatedAt;
 
     receipt.products = data.products.map((product: any): ReceiptProduct => {
       return ReceiptProduct.fromData(product);
@@ -152,12 +164,22 @@ const schema = new Schema<IReceipt>({
     type: Number,
     required: true,
   },
+  
+  deliveryAt: {
+    type: Date,
+    required: false,
+  },
+
+  status: {
+    type: String,
+    required: true
+  },
 
   client: {
     type: Schema.Types.ObjectId,
     ref: "clients",
     required: true
-  }
-});
+  },
+}, { timestamps: true});
 
 export const ReceiptModel = model<IReceipt>("receipts", schema);

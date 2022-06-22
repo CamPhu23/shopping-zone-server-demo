@@ -7,6 +7,7 @@ import AdminAuthenticationController from './controllers/admin/admin-auth-contro
 import AdminAccountController from './controllers/admin/admin-account-controller';
 import AdminStatisticController from './controllers/admin/admin-statistics-controller';
 import AdminProductController from './controllers/admin/admin-product-controller';
+import AdminReceiptController from './controllers/admin/admin-receipt-controller';
 
 connectMongoDB();
 
@@ -19,6 +20,7 @@ const app = new App([
   new AdminAccountController(),
   new AdminStatisticController(),
   new AdminProductController(),
+  new AdminReceiptController(),
 ], PORT as string);
 
 app.listen();
