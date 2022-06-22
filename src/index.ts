@@ -18,7 +18,7 @@ const app = new App([
   new ProductController(),
   new AuthenticationController(),
   new CommentController(),
-  new AdminReplyController()
+  new AdminReplyController(),
   new PaymentController(),
   new AdminAuthenticationController(),
   new AdminAccountController(),
