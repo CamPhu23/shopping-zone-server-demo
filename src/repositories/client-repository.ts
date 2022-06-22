@@ -7,6 +7,10 @@ export class ClientRepository extends BaseRepository {
     return client ? Client.fromData(client) : null;
   };
 
+  async countAll(): Promise<Number | 0> {
+    return await ClientModel.countDocuments({});
+  }
+
   saveReceipt(newReceiptId: Receipt, id: string): void {
     ClientModel.findOneAndUpdate({ "_id": id },
       { $push: { receipts: newReceiptId } },

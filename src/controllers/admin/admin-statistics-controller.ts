@@ -1,6 +1,6 @@
 import express from "express";
 import { ResponseData } from "../../data/models";
-import { adminStatisticService } from '../../services';
+import { adminAuthService, adminStatisticService } from '../../services';
 import { ResultCode } from "../../utils";
 import BaseController from "../base-controller";
 

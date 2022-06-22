@@ -131,4 +131,8 @@ export class ProductRepository extends BaseRepository {
 
     return newProduct;
   }
+
+  async countAll(): Promise<Number | 0> {
+    return await ProductModel.countDocuments({});
+  }
 }
