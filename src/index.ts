@@ -1,7 +1,9 @@
-import { connectMongoDB } from './config/database'
 import App from './app';
-import ProductController from './controllers/product-controller';
+import { connectMongoDB } from './config/database';
 import AuthenticationController from './controllers/auth-controller';
+import CommentController from './controllers/comment-controller';
+import ProductController from './controllers/product-controller';
+import AdminReplyController from './controllers/admin/admin-reply-controller';
 import PaymentController from './controllers/payment-controller';
 import AdminAuthenticationController from './controllers/admin/admin-auth-controller';
 import AdminAccountController from './controllers/admin/admin-account-controller';
@@ -15,6 +17,8 @@ const PORT = process.env.PORT || 8888;
 const app = new App([
   new ProductController(),
   new AuthenticationController(),
+  new CommentController(),
+  new AdminReplyController(),
   new PaymentController(),
   new AdminAuthenticationController(),
   new AdminAccountController(),
