@@ -7,8 +7,6 @@ import { ResultCode } from '../utils';
 
 export class ProductService {
   async getAllProduct(category: string, color: string, size: string, feature: string, search: string, p: number, s: number): Promise<any> {
-    console.log({ category, color, size, feature, p, s });
-
     const queryCategory = category.split(",");
     const queryColor = color.split(",");
     const querySize = size.split(",");

@@ -1,4 +1,5 @@
 import { Schema, model, Types } from "mongoose";
+import { Receipt } from "./receipt-model";
 import { RefreshToken } from "./refresh-token-model";
 
 interface IClient {
@@ -10,6 +11,7 @@ interface IClient {
   address: string;
   isDelete: boolean;
   refreshToken: Types.ObjectId;
+  receipts: Types.ObjectId[];
 }
 
 export class Client {
@@ -22,6 +24,7 @@ export class Client {
   address: string;
   isDelete: boolean;
   refreshToken: RefreshToken[] | null;
+  receipts: Receipt[];
 
   static fromData(data: any): Client {
     const client = new Client();
@@ -36,8 +39,13 @@ export class Client {
     client.isDelete = data.isDelete || false;
     client.refreshToken = data.refreshToken
       ? data.refreshToken.map((refresh: any): RefreshToken => {
-          return RefreshToken.fromData(refresh);
-        })
+        return RefreshToken.fromData(refresh);
+      })
+      : null;
+    client.receipts = data.receipt
+      ? data.receipt.map((receipt: any): Receipt => {
+        return Receipt.fromData(receipt);
+      })
       : null;
 
     return client;
@@ -83,6 +91,13 @@ const schema = new Schema<IClient>({
     {
       type: Schema.Types.ObjectId,
       ref: "refresh-tokens",
+    },
+  ],
+
+  receipts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "receipts",
     },
   ],
 });

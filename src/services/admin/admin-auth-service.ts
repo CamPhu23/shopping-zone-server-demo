@@ -1,35 +1,36 @@
-import { AccessTokenPayload, ResponseData, Token } from "../data/models";
-import { ResultCode } from "../utils";
-import { clientRepository, refreshTokenRepository } from "../repositories";
+import { AccessTokenPayload, ResponseData, Token } from "../../data/models";
+import { ResultCode } from "../../utils";
+import { adminRepository, refreshTokenRepository } from "../../repositories";
 import jwt from "jsonwebtoken";
 import bcryptjs = require("bcryptjs");
-import { Client } from "../models";
+import { Admin } from "../../models";
 import moment = require("moment");
 
-const ACCESS_TOKEN_EXPIRED_IN_TIME = 60 * 30; //30 Mins
+const ACCESS_TOKEN_EXPIRED_IN_TIME = 60 * 60 * 24 * 2; //2 Days
 const REFRESH_TOKEN_EXPIRED_IN_TIME = 60 * 60 * 24 * 3; //3 Days
 
-export class AuthService {
+export class AdminAuthService {
   async login(username: string, password: string): Promise<ResponseData> {
     let res: ResponseData;
 
-    const client = await clientRepository.getClientByUsername(username);
+    const admin = await adminRepository.getAdminByUsername(username);
     const isMatch = await bcryptjs.compare(
       password,
-      client ? client.password : ""
+      admin ? admin.password : ""
     );
 
-    if (!client || !isMatch) {
+    if (!admin || !isMatch) {
       return (res = {
         status: ResultCode.NOT_FOUND,
         message: "Username or password is not correct",
       });
     }
 
-    const token = this.generateToken(client);
+    const token = this.generateToken(admin);
     const saveTokenResult = (await refreshTokenRepository.saveRefreshToken(
-      client.id,
-      token.refreshToken.token
+      "",
+      token.refreshToken.token,
+      admin.id
     ))
       ? true
       : false;
@@ -50,15 +51,15 @@ export class AuthService {
       );
 
       if (payload) {
-        const token = await refreshTokenRepository.getRefreshToken(
+        const token = await refreshTokenRepository.getAdminRefreshToken(
           refreshToken
         );
 
-        if (token && token.client) {
+        if (token && token.admin) {
           await refreshTokenRepository.usedRefreshToken(token.token);
-          const newToken = this.generateToken(token.client);
+          const newToken = this.generateToken(token.admin);
           await refreshTokenRepository.saveRefreshToken(
-            token.client.id,
+            token.admin.id,
             newToken.refreshToken.token
           );
 
@@ -83,10 +84,10 @@ export class AuthService {
     }
   }
 
-  private generateToken(client: Client): Token {
+  private generateToken(admin: Admin): Token {
     const accessPayload: AccessTokenPayload = {
-      id: client.id,
-      username: client.username,
+      id: admin.id,
+      username: admin.username,
     };
 
     const accessToken = jwt.sign(
@@ -115,7 +116,7 @@ export class AuthService {
           .format(),
       },
       user: {
-        permission: "client",
+        permission: "admin",
       },
     };
   }

@@ -24,12 +24,6 @@ class ProductController extends BaseController {
     response: express.Response,
     next: express.NextFunction
   ): Promise<any> {
-    // const res: ResponseData = {
-    //   status: ResultCode.SUCCESS,
-    //   result: {
-    //     mess: "oke",
-    //   },
-    // };
 
     const {
       category = DefaultValue.DEFAULT_PRODUCT_CATEGORY,
@@ -60,7 +54,6 @@ class ProductController extends BaseController {
     next: express.NextFunction
   ): Promise<any>{
     const {id} = request.params;
-    console.log(id);
 
     const res = await productService.getProduct(id);
     super.responseJson(response, res);

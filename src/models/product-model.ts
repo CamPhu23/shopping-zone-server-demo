@@ -4,7 +4,6 @@ import { Image, Warehouse } from ".";
 import { Comment } from "./comment-model";
 import { ImageWithoutProduct } from "./image-model";
 import { Rating } from "./rating-model";
-// import { Rating } from "./rating-model";
 
 interface IProduct {
   name: string;
@@ -18,6 +17,8 @@ interface IProduct {
   warehouses: Types.ObjectId[];
   comments: Types.ObjectId[];
   ratings: Types.ObjectId[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface ProductIntroduce {
@@ -25,6 +26,7 @@ export interface ProductIntroduce {
   name: string;
   category: string;
   price: number;
+  rating: number;
   image: ImageWithoutProduct;
 }
 
@@ -38,9 +40,11 @@ export class Product {
   tags: string[];
   images: Image[];
   warehouses: Warehouse[] | null;
-  comments: Comment[] | null; 
-  ratings: Rating[] | null; 
+  comments: Comment[] | null;
+  ratings: Rating[] | null;
   isDelete: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 
   static fromData(data: any): Product {
     const product = new Product();
@@ -52,29 +56,31 @@ export class Product {
     product.discount = data.discount;
     product.category = data.category;
     product.tags = data.tags;
+    product.createdAt = data.createdAt;
+    product.updatedAt = data.updatedAt;
 
-    product.images = data.images.map((image: any): Image => {
+    product.images = data.images?.map((image: any): Image => {
       return Image.fromData(image);
     });
 
     product.warehouses = data.warehouses
       ? data.warehouses.map((warehouse: any): Warehouse => {
-          return Warehouse.fromData(warehouse);
-        })
+        return Warehouse.fromData(warehouse);
+      })
       : null;
-    
+
     product.comments = data.comments
-      ? data.comments.map((comment: any): Comment =>{
-          return Comment.fromData(comment);
+      ? data.comments.map((comment: any): Comment => {
+        return Comment.fromData(comment);
       })
       : null;
 
     product.ratings = data.ratings
-    ? data.ratings.map((ratings: any): Rating =>{
+      ? data.ratings.map((ratings: any): Rating => {
         return Rating.fromData(ratings);
-    })
-    : null;
-  
+      })
+      : null;
+
     product.isDelete = data.isDelete;
 
     return product;
@@ -86,6 +92,7 @@ export class Product {
       category: product.category,
       name: product.name,
       price: product.price,
+      rating: Rating.formatProductDetailRes(product.ratings).stars,
       image: Image.getImageWithoutProduct(product.images[0]),
     };
   }
@@ -160,6 +167,6 @@ const schema = new Schema<IProduct>({
       required: false,
     },
   ],
-});
+}, { timestamps: true});
 
 export const ProductModel = model<IProduct>("products", schema);
