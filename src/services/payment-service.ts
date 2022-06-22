@@ -62,7 +62,7 @@ export class PaymentService {
     warehouseRepository.updateQuantity((paymentInfo as any).products);
     (paymentInfo as any).client = account.id;
     const newReceipt = await receiptRepository.saveReceipt(paymentInfo);
-    clientRepository.saveReceipt(newReceipt.id, account.id);
+    await clientRepository.saveReceipt(newReceipt.id, account.id);
 
     return (res = {
       status: ResultCode.SUCCESS,
