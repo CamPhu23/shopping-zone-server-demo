@@ -4,6 +4,7 @@ import { PaymentService } from './payment-service';import { AdminProductService 
 import { AdminAuthService } from './admin/admin-auth-service';
 import { AdminAccountService } from './admin/admin-account-service';
 import { AdminStatisticsService } from './admin/admin-statistics-service';
+import { AdminReceiptService } from './admin/admin-receipt-service';
 
 const productService = new ProductService();
 const authService = new AuthService();
@@ -12,6 +13,7 @@ const adminProductService = new AdminProductService();
 const adminAuthService = new AdminAuthService();
 const adminAccountService = new AdminAccountService();
 const adminStatisticService = new AdminStatisticsService();
+const adminReceiptService = new AdminReceiptService();
 
 export {
   productService,
@@ -21,4 +23,5 @@ export {
   adminAuthService,
   adminAccountService,
   adminStatisticService,
+  adminReceiptService,
 };
