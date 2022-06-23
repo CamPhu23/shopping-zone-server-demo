@@ -5,10 +5,10 @@ import { RefreshToken } from "./refresh-token-model";
 interface IClient {
   username: string;
   password: string;
-  email: string;
-  fullname: string;
-  phone: string;
-  address: string;
+  email: string | null;
+  fullname: string | null;
+  phone: string | null;
+  address: string | null;
   isDelete: boolean;
   refreshToken: Types.ObjectId;
   receipts: Types.ObjectId[];
@@ -32,9 +32,9 @@ export class Client {
     client.id = data.id as string;
     client.username = data.username;
     client.password = data.password;
-    client.email = data.email;
-    client.fullname = data.fullname;
-    client.phone = data.phone;
+    client.email = data.email || "";
+    client.fullname = data.fullname || "";
+    client.phone = data.phone || "";
     client.address = data.address || "";
     client.isDelete = data.isDelete || false;
     client.refreshToken = data.refreshToken
