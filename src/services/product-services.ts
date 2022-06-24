@@ -11,7 +11,6 @@ export class ProductService {
     const queryColor = color.split(",");
     const querySize = size.split(",");
     const queryFeature = feature.split(",");
-
     const queryData = await productRepository.getAllProduct(queryCategory, queryColor, querySize, queryFeature, search, p, s);
     const result: ResponseData = {
       status: ResultCode.SUCCESS,
