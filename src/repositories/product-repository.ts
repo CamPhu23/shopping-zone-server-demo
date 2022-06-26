@@ -1,6 +1,7 @@
 import _ from "lodash";
-import { Product, ProductModel } from "../models";
+import { Product, ProductModel, Comment } from "../models";
 import { BaseRepository } from "./base-repository";
+const mongoose = require('mongoose');
 
 export class ProductRepository extends BaseRepository {
   async getAllProducts(): Promise<any> {
@@ -72,7 +73,7 @@ export class ProductRepository extends BaseRepository {
       .populate("warehouses", "_id size color quantity sold")
       .populate({
         path: "comments",
-        select: "content name replyTo"
+        select: "content name replyTo updatedAt"
       })
       .populate({ path: "ratings", select: "rate" });
 
@@ -130,5 +131,18 @@ export class ProductRepository extends BaseRepository {
     );
 
     return newProduct;
+  }
+
+  async saveReply(productID: string, comment: Comment | null): Promise<any> {
+    if (!_.isNull(comment)) {
+      let id = mongoose.Types.ObjectId(productID);
+
+      await ProductModel.findByIdAndUpdate(id, { $push: { comments: comment.id } })
+    }
+  }
+
+  async deleteComments(ids: string[], productId: string): Promise<any> {
+    ProductModel.findByIdAndUpdate({ "_id": productId }, { $pull: { comments: { $in: ids } } },
+      (err, product) => { console.log(err); })
   }
 }

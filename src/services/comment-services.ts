@@ -1,17 +1,19 @@
-import { commentRepository } from "../repositories";
+import { commentRepository, productRepository } from "../repositories";
 import { ResponseData } from "../data/models";
 import { ResultCode } from "../utils";
 
 export class CommentService {
     private response: ResponseData;
-    async addComment(name: string, content: string, product: string, replyTo: string | null ): Promise<any>{
+    async addComment(name: string, content: string, productID: string): Promise<any> {
         try {
-            const addComment = await commentRepository.saveComment(name, content, product, replyTo);
+            const newComment = await commentRepository.saveComment(name, productID, content, null);
+            await productRepository.saveReply(productID, newComment);
+
             return (this.response = {
                 status: ResultCode.SUCCESS,
-                result: addComment
+                result: newComment
             })
-            
+
         } catch (error: any) {
             return (this.response = {
                 status: ResultCode.FAILED,
@@ -19,24 +21,4 @@ export class CommentService {
             })
         }
     }
-
-    
-
-    async deleteComment(commentID: string, replyID: string, product: string): Promise<any>{
-        try {
-            const deletedComment = await commentRepository.deleteComment(commentID, replyID, product)
-            return (this.response = {
-                status: ResultCode.SUCCESS,
-                result: deletedComment
-            })
-            
-        } catch (error: any) {
-            return (this.response = {
-                status: ResultCode.FAILED,
-                message: error.message || ''
-            })
-        }
-    }
-
-    
 }

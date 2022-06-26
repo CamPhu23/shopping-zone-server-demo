@@ -1,7 +1,7 @@
 import { ProductService } from './product-services';
 import { AuthService } from './auth-service';
 import { CommentService } from './comment-services';
-import { ReplyService } from './reply-services';
+import { ReplyService } from './admin/admin-comment-services';
 import { PaymentService } from './payment-service';
 import { AdminProductService } from './admin/admin-product-service'
 import { AdminAuthService } from './admin/admin-auth-service';
