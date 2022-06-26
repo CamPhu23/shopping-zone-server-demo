@@ -6,6 +6,7 @@ import { Image, ImageModel, ImageWithoutProduct } from './image-model';
 import { Warehouse, WarehouseModel } from './warehouse-model';
 import { BaseModel } from './base-model';
 import { Receipt, ReceiptModel } from './receipt-model';
+import { Comment, CommentModel } from './comment-model';
 
 export {
   BaseModel,
@@ -24,5 +25,7 @@ export {
   Receipt,
   ReceiptModel,
   Admin,
-  AdminModel
+  AdminModel,
+  Comment,
+  CommentModel,
 }
