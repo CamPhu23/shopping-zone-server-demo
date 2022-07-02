@@ -3,6 +3,7 @@ import { AuthService } from './auth-service';
 import { CommentService } from './comment-services';
 import { ReplyService } from './admin/admin-comment-services';
 import { PaymentService } from './payment-service';
+import { AccountService } from './account-service';
 import { AdminProductService } from './admin/admin-product-service'
 import { AdminAuthService } from './admin/admin-auth-service';
 import { AdminAccountService } from './admin/admin-account-service';
@@ -14,6 +15,7 @@ const authService = new AuthService();
 const commentService = new CommentService();
 const replyService = new ReplyService();
 const paymentService = new PaymentService();
+const accountService = new AccountService()
 const adminProductService = new AdminProductService();
 const adminAuthService = new AdminAuthService();
 const adminAccountService = new AdminAccountService();
@@ -24,6 +26,7 @@ export {
   productService,
   authService,
   paymentService,
+  accountService
   commentService,
   replyService,
   adminProductService,
