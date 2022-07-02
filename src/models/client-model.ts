@@ -72,14 +72,17 @@ const schema = new Schema<IClient>({
 
   fullname: {
     type: String,
+    required: false
   },
 
   phone: {
     type: String,
+    required: false
   },
 
   address: {
     type: String,
+    required: false
   },
 
   isDelete: {

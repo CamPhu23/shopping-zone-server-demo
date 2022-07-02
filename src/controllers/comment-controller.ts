@@ -19,13 +19,10 @@ class CommentController extends BaseController {
     request: express.Request,
     response: express.Response
   ): Promise<any> {
-    const {nameOfCustomer, content, productID} = request.body;
-    const replyTo = null;
-    // convert string to ObjectId types
-    let product_id = mongoose.Types.ObjectId(productID)
-    
-    const res = await commentService.addComment(nameOfCustomer, content, product_id, replyTo);
-    // console.log(res)
+    const { nameOfCustomer, content, productID } = request.body;
+
+    const res = await commentService.addComment(nameOfCustomer, content, productID);
+
     super.responseJson(response, res);
 
   }
