@@ -21,7 +21,7 @@ export class ReceiptRepository extends BaseRepository {
     let isUpdated: any = false;
     isUpdated = await ReceiptModel.findOneAndUpdate({ "_id": receipt.id },
       { "status": receipt.status }, { new: true, rawResult: true });
-    
+
     return isUpdated.lastErrorObject.updatedExisting;
   }
 

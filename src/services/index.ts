@@ -9,6 +9,7 @@ import { AdminAuthService } from './admin/admin-auth-service';
 import { AdminAccountService } from './admin/admin-account-service';
 import { AdminStatisticsService } from './admin/admin-statistics-service';
 import { AdminReceiptService } from './admin/admin-receipt-service';
+import { AdminWarehouseService } from './admin/admin-warehouse-service';
 
 const productService = new ProductService();
 const authService = new AuthService();
@@ -21,12 +22,13 @@ const adminAuthService = new AdminAuthService();
 const adminAccountService = new AdminAccountService();
 const adminStatisticService = new AdminStatisticsService();
 const adminReceiptService = new AdminReceiptService();
+const adminWarehouseService = new AdminWarehouseService();
 
 export {
   productService,
   authService,
   paymentService,
-  accountService
+  accountService,
   commentService,
   replyService,
   adminProductService,
@@ -34,4 +36,5 @@ export {
   adminAccountService,
   adminStatisticService,
   adminReceiptService,
+  adminWarehouseService,
 };
