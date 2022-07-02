@@ -1,4 +1,5 @@
 import { model, Schema, Types } from "mongoose";
+import { Client } from "./client-model";
 
 interface IReceipt {
   fullname: string;
@@ -14,7 +15,11 @@ interface IReceipt {
   shippingCost: number;
   totalDiscount: number;
   totalBill: number;
-  account: Types.ObjectId;
+  client: Types.ObjectId;
+  status: string;
+  deliveryAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export class ReceiptProduct {
@@ -51,12 +56,16 @@ export class Receipt {
   cardNumber: string;
   cardEnddate: string;
   cardCVV: string;
-  products: Types.ObjectId[];
+  products: ReceiptProduct[];
   totalPay: number;
   shippingCost: number;
   totalDiscount: number;
   totalBill: number;
-  account: Types.ObjectId;
+  client: Client;
+  status: string;
+  deliveryAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
 
   static fromData(data: any): Receipt {
     const receipt = new Receipt();
@@ -74,9 +83,14 @@ export class Receipt {
     receipt.shippingCost = data.shippingCost;
     receipt.totalDiscount = data.totalDiscount;
     receipt.totalBill = data.totalBill;
+    receipt.client = Client.fromData(data.client) || null;
+    receipt.status = data.status
+    receipt.deliveryAt = data.deliveryAt;
+    receipt.createdAt = data.createdAt;
+    receipt.updatedAt = data.updatedAt;
 
-    receipt.products = data.products.map((image: any): ReceiptProduct => {
-      return ReceiptProduct.fromData(image);
+    receipt.products = data.products.map((product: any): ReceiptProduct => {
+      return ReceiptProduct.fromData(product);
     });
 
     return receipt;
@@ -150,12 +164,22 @@ const schema = new Schema<IReceipt>({
     type: Number,
     required: true,
   },
+  
+  deliveryAt: {
+    type: Date,
+    required: false,
+  },
 
-  account: {
-    type: Schema.Types.ObjectId,
-    ref: "client",
+  status: {
+    type: String,
     required: true
-  }
-});
+  },
+
+  client: {
+    type: Schema.Types.ObjectId,
+    ref: "clients",
+    required: true
+  },
+}, { timestamps: true});
 
 export const ReceiptModel = model<IReceipt>("receipts", schema);

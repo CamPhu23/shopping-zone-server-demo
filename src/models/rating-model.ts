@@ -19,7 +19,6 @@ export class Rating{
     rate: number;
     product: Product | null;
     client: Client | null;
-
     static fromData(data: any): Rating{
         const rating = new Rating();
         rating.id = data.id as string;

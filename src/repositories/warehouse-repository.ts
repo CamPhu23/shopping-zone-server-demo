@@ -13,9 +13,10 @@ export class WarehouseRepository extends BaseRepository {
         "quantity": { $gt: p.quantity }
       },
         { $inc: { "quantity": -p.quantity, "sold": p.quantity } },
-        { new: true }, (err, product) => { });
+        { new: true }, (err, product) => {
+          console.log(err);
+        });
     }
-
   }
 
   async checkEnoughQuantity(products: ReceiptProduct[]): Promise<any[]> {
@@ -29,7 +30,7 @@ export class WarehouseRepository extends BaseRepository {
       })
 
       if ((warehouseProduct?.quantity as number) < p.quantity) {
-        notEnough.push({id: p.id, name: p.name, quantityExist: warehouseProduct?.quantity, color: p.color, size: p.size});
+        notEnough.push({ id: p.id, name: p.name, quantityExist: warehouseProduct?.quantity, color: p.color, size: p.size });
       }
     }
 
@@ -46,11 +47,15 @@ export class WarehouseRepository extends BaseRepository {
         "size": p.size,
       })
 
-      if (_.isEmpty(warehouseProduct) ) {
-        notExist.push({id: p.id, name: p.name,color: p.color, size: p.size});
+      if (_.isEmpty(warehouseProduct)) {
+        notExist.push({ id: p.id, name: p.name, color: p.color, size: p.size });
       }
     }
 
     return notExist;
+  }
+
+  deleteWarehousesByProductID(productID: string): void {
+    WarehouseModel.deleteMany({ product: productID });
   }
 }

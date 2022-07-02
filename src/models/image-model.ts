@@ -4,7 +4,11 @@ import { Product } from "./product-model";
 interface IImage {
   name: string;
   url: string;
-  publicId: string;
+  format: string;
+  height: number;
+  width: number;
+  size: number;
+  isDelete: boolean;
   product: Types.ObjectId;
 }
 
@@ -12,14 +16,17 @@ export interface ImageWithoutProduct {
   id: string;
   name: string;
   url: string;
-  publicId: string;
 }
 
 export class Image {
   id: string;
   name: string;
   url: string;
-  publicId: string;
+  format: string;
+  height: number;
+  width: number;
+  size: number;
+  isDelete: boolean;
   product?: Product | null;
 
   static fromData(data: any): Image {
@@ -28,7 +35,11 @@ export class Image {
     image.id = data.id as string;
     image.name = data.name;
     image.url = data.url;
-    image.publicId = data.publicId;
+    image.format = data.format;
+    image.height = data.height;
+    image.width = data.width;
+    image.size = data.size;
+    image.isDelete = data.isDelete;
     image.product = data.product ? Product.fromData(data.product) : null;
 
     return image;
@@ -38,8 +49,7 @@ export class Image {
     return {
       id: image.id,
       name: image.name,
-      url: image.url,
-      publicId: image.publicId,
+      url: image.url
     };
   }
 }
@@ -55,14 +65,35 @@ const schema = new Schema<IImage>({
     required: true,
   },
 
-  publicId: {
+  format: {
     type: String,
-    required: true,
+    required: false,
+  },
+
+  height: {
+    type: Number,
+    required: false,
+  },
+
+  width: {
+    type: Number,
+    required: false,
+  },
+
+  size: {
+    type: Number,
+    required: false,
+  },
+
+  isDelete: {
+    type: Boolean,
+    required: false,
+    default: false
   },
 
   product: {
     type: Schema.Types.ObjectId,
-    required: true,
+    required: false,
     ref: "products",
   },
 });
