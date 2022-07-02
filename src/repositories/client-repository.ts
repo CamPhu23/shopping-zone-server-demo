@@ -11,8 +11,9 @@ export class ClientRepository extends BaseRepository {
     const updateInforUser = await ClientModel.findByIdAndUpdate(id, 
         {fullname: fullname, email: email, phone: phone, address: address}, { new: true }
     );
-    console.log(updateInforUser)
+
     return updateInforUser ? Client.fromData({
+      id: id,
       fullname: updateInforUser.fullname,
       email: updateInforUser.email,
       phone: updateInforUser.phone,
@@ -23,6 +24,7 @@ export class ClientRepository extends BaseRepository {
   async getClientById(id: string): Promise<Client | null> {
     const client = await ClientModel.findById(id);
     return client ? Client.fromData({
+      id: id,
       fullname: client.fullname,
       email: client.email,
       phone: client.phone,
