@@ -15,7 +15,6 @@ export class AccountService {
         result: updateInforUser
       }
     } catch (error: any) {
-      console.log(error);
       if (error.codeName == "DupicateKey") {
         return this.response = {
           status: ResultCode.BAD_INPUT_DATA,
@@ -45,7 +44,8 @@ export class AccountService {
           receipts,
           info: {
             currentIndex: p,
-            total: Math.ceil(numOfReceipt / s),
+            currentSize: s,
+            total: numOfReceipt,
           }
         }
       }
