@@ -18,7 +18,7 @@ export class ReplyService {
             })
         }
     }
-    
+
     async getAll(): Promise<any> {
         try {
             const comments = await commentRepository.getAll();
@@ -38,7 +38,7 @@ export class ReplyService {
         try {
             const comment = await commentRepository.saveComment("Quản trị viên", productID, content, replyTo);
             await productRepository.saveReply(productID, comment);
-            
+
             return (this.response = {
                 status: ResultCode.SUCCESS,
                 result: comment
