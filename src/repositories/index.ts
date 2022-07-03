@@ -6,6 +6,7 @@ import { CommentRepository } from './comment-repository';
 import { ReceiptRepository } from './receipt-repository';
 import { WarehouseRepository } from './warehouse-repository';
 import { ImageRepository } from './image-repository';
+import { RatingRepository } from './rating-repository';
 
 const productRepository = new ProductRepository();
 const clientRepository = new ClientRepository();
@@ -15,6 +16,7 @@ const receiptRepository = new ReceiptRepository();
 const warehouseRepository = new WarehouseRepository();
 const imageRepository = new ImageRepository();
 const adminRepository = new AdminRepository();
+const ratingRepository = new RatingRepository();
 
 export {
   productRepository,
@@ -25,4 +27,5 @@ export {
   warehouseRepository,
   imageRepository,
   adminRepository,
+  ratingRepository,
 };
