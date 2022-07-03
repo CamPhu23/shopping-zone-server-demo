@@ -1,12 +1,31 @@
-import { AccessTokenPayload, ResponseData, Token } from "../data/models";
-import { clientRepository, receiptRepository } from "../repositories";
-import { ResultCode } from "../utils";
 import jwt from "jsonwebtoken";
-import _ from "lodash";
-import { DEFAULT_PAGE, DEFAULT_SIZE } from "../utils/default-value";
+import { ResponseData } from "../data/models";
+import { clientRepository, ratingRepository, receiptRepository } from "../repositories";
+import { ResultCode } from "../utils";
 
 export class AccountService {
   private response: ResponseData;
+
+  async ratingProduct(datas: any): Promise<ResponseData> {
+    try {
+
+      for await (var data of datas) {
+        const rating = await ratingRepository.ratingProduct(data.product, data.rate, data.receipt);
+        await receiptRepository.updateProductRating(data.receipt, rating._id as string);
+      }
+
+      return this.response = {
+        status: ResultCode.SUCCESS,
+        // result: updateInforUser
+      }
+    } catch (error: any) {
+      return this.response = {
+        status: ResultCode.FAILED,
+        result: error.message || ""
+      }
+    }
+  }
+
   async updateInforUserById(id: string, fullname: string, email: string, phone: string, address: string): Promise<ResponseData> {
     try {
       const updateInforUser = await clientRepository.updateInforUserById(id, fullname, email, phone, address);

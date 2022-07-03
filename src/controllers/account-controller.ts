@@ -16,6 +16,17 @@ class AccountController extends BaseController {
     this.router.get(`${this.path}/info`, this.getInforUser);
     this.router.get(`${this.path}/orders`, this.getAllReceiptByUser);
     this.router.get(`${this.path}/order/:id`, this.getReceiptById);
+    this.router.post(`${this.path}/rating`, this.postRating);
+  }
+
+  private async postRating(
+    request: express.Request,
+    response: express.Response
+  ): Promise<any> {
+    const data = request.body;
+
+    const res = await accountService.ratingProduct(data);
+    super.responseJson(response, res);
   }
 
   private async updateInforUserById(

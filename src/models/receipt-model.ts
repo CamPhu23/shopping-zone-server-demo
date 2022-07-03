@@ -1,5 +1,6 @@
 import { model, Schema, Types } from "mongoose";
 import { Client } from "./client-model";
+import { Rating } from "./rating-model";
 
 interface IReceipt {
   fullname: string;
@@ -15,7 +16,7 @@ interface IReceipt {
   shippingCost: number;
   totalDiscount: number;
   totalBill: number;
-  client: Types.ObjectId;
+  ratings: Types.ObjectId[];
   status: string;
   deliveryAt: Date;
   createdAt: Date;
@@ -61,7 +62,7 @@ export class Receipt {
   shippingCost: number;
   totalDiscount: number;
   totalBill: number;
-  client: Client;
+  ratings: Rating[];
   status: string;
   deliveryAt: Date;
   createdAt: Date;
@@ -83,11 +84,14 @@ export class Receipt {
     receipt.shippingCost = data.shippingCost;
     receipt.totalDiscount = data.totalDiscount;
     receipt.totalBill = data.totalBill;
-    receipt.client = Client.fromData(data.client) || null;
     receipt.status = data.status
     receipt.deliveryAt = data.deliveryAt;
     receipt.createdAt = data.createdAt;
     receipt.updatedAt = data.updatedAt;
+
+    receipt.ratings = data.ratings.map((rating: any): Rating => {
+      return Rating.fromData(rating);
+    });
 
     receipt.products = data.products.map((product: any): ReceiptProduct => {
       return ReceiptProduct.fromData(product);
@@ -175,11 +179,11 @@ const schema = new Schema<IReceipt>({
     required: true
   },
 
-  client: {
+  ratings: [{
     type: Schema.Types.ObjectId,
-    ref: "clients",
+    ref: "ratings",
     required: true
-  },
+  }],
 }, { timestamps: true});
 
 export const ReceiptModel = model<IReceipt>("receipts", schema);
