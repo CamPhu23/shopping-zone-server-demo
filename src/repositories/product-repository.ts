@@ -80,6 +80,13 @@ export class ProductRepository extends BaseRepository {
     return product ? Product.fromData(product) : null;
   }
 
+  // Get product by name
+  async getProductByName(name: string): Promise<any> {
+    let product = await ProductModel.findOne({ "name": name, isDelete: false }, "_id");
+
+    return product;
+  }
+
   async saveProduct(product: Product): Promise<Product | any> {
     let newProduct = new ProductModel(product);
     await newProduct.save();
