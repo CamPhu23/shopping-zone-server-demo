@@ -6,6 +6,8 @@ import bcryptjs = require("bcryptjs");
 import { Client } from "../models";
 import moment = require("moment");
 import nodemailer = require("nodemailer");
+import ResetPasswordTemplate from '../template/reset-password-mail';
+
 
 const ACCESS_TOKEN_EXPIRED_IN_TIME = 60 * 5; //5 Mins
 const REFRESH_TOKEN_EXPIRED_IN_TIME = 60 * 60 * 24 * 3; //3 Days
@@ -134,9 +136,9 @@ export class AuthService {
       }
       // Create a link to reset password, expirein: 5m
       const token = jwt.sign(payload, process.env.JWT_RESET_PASSWORD_TOKEN_SECRET_KEY as string, {algorithm: "HS256", expiresIn: 60*5})
-      console.log(token)
+      // console.log(token)
 
-      const reset_password_url = `http://localhost:3000/auth/resetpassword/${token}`
+      const reset_password_url = `http://localhost:8000/auth/reset-password/${token}`
       console.log(reset_password_url)
 
       // Create sending reset password link through email
@@ -156,12 +158,9 @@ export class AuthService {
         from: '"Huy Phú" <huyphu@gmail.com>', // sender address
         to: `${client.email}`, // list of receivers
         subject: "Reset password link", // Subject line
-        html: `
-          <h3>Hello my customer</h3> 
-          <p>It's a link to reset your password:</p> 
-          <b>${reset_password_url}</b>`, // html body
+        html: ResetPasswordTemplate(reset_password_url),
       });
-        
+      // <b>${reset_password_url}</b>
       // Preview only available when sending through an Ethereal account
       console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
       // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...

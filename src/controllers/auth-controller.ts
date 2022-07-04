@@ -18,9 +18,9 @@ class AuthenticationController extends BaseController {
     this.router.post(`${this.path}/register`, this.register);
     this.router.post(`${this.path}/refresh-token`, this.refreshToken);
     // Forgot password router
-    this.router.post(`${this.path}/forgotpassword`, this.forgotPassword)
+    this.router.post(`${this.path}/forgot-password`, this.forgotPassword)
     // Reset password router
-    this.router.post(`${this.path}/resetpassword/:token`, this.resetPassword)
+    this.router.post(`${this.path}/reset-password/:token`, this.resetPassword)
     
   }
 
@@ -99,7 +99,7 @@ class AuthenticationController extends BaseController {
           message: error,
         })
       }
-      console.log(email)
+      // console.log(email)
       console.log({newPassword});
 
       const res = await authService.resetPassword(email, newPassword);
