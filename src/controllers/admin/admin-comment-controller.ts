@@ -31,8 +31,8 @@ class AdminCommentController extends BaseController {
     request: express.Request,
     response: express.Response
   ): Promise<any> {
-    const data = request.body
-    const res = await replyService.markComment(data.ids);
+    const ids = request.body
+    const res = await replyService.markComment(ids);
 
     super.responseJson(response, res);
   }
@@ -41,10 +41,8 @@ class AdminCommentController extends BaseController {
     request: express.Request,
     response: express.Response
   ): Promise<any> {
-    const { product, content, replyTo } = request.body;
-
-    // convert string to ObjectId types
-    const res = await replyService.addReply(product, content, replyTo);
+    const { productId, content, replyTo } = request.body;
+    const res = await replyService.addReply(productId, content, replyTo);
 
     super.responseJson(response, res);
   }
@@ -53,8 +51,8 @@ class AdminCommentController extends BaseController {
     request: express.Request,
     response: express.Response
   ): Promise<any> {
-    const { ids, productID } = request.body
-    const res = await replyService.deleteComments(ids, productID);
+    const { ids, productId } = request.body
+    const res = await replyService.deleteComments(ids, productId);
 
     super.responseJson(response, res)
   }

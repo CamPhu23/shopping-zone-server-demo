@@ -18,7 +18,7 @@ export class ReplyService {
             })
         }
     }
-    
+
     async getAll(): Promise<any> {
         try {
             const comments = await commentRepository.getAll();
@@ -38,7 +38,6 @@ export class ReplyService {
         try {
             const comment = await commentRepository.saveComment("Quản trị viên", productID, content, replyTo);
             await productRepository.saveReply(productID, comment);
-            
             return (this.response = {
                 status: ResultCode.SUCCESS,
                 result: comment
@@ -50,7 +49,6 @@ export class ReplyService {
             })
         }
     }
-
 
     async deleteComments(ids: string[], productId: string): Promise<any> {
         try {
@@ -72,7 +70,6 @@ export class ReplyService {
         }
     }
 
-
     async editReply(comment: any): Promise<any> {
         try {
             const editReply = await commentRepository.editComment(comment)
@@ -82,7 +79,6 @@ export class ReplyService {
                     result: editReply
                 }
             )
-
         } catch (error: any) {
             return (this.response = {
                 status: ResultCode.FAILED,

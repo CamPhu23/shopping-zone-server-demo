@@ -5,11 +5,13 @@ import CommentController from './controllers/comment-controller';
 import ProductController from './controllers/product-controller';
 import AdminReplyController from './controllers/admin/admin-comment-controller';
 import PaymentController from './controllers/payment-controller';
+import AccountController from './controllers/account-controller'
 import AdminAuthenticationController from './controllers/admin/admin-auth-controller';
 import AdminAccountController from './controllers/admin/admin-account-controller';
 import AdminStatisticController from './controllers/admin/admin-statistics-controller';
 import AdminProductController from './controllers/admin/admin-product-controller';
 import AdminReceiptController from './controllers/admin/admin-receipt-controller';
+import AdminWarehouseController from './controllers/admin/admin-warehouse-controller';
 
 connectMongoDB();
 
@@ -20,11 +22,13 @@ const app = new App([
   new CommentController(),
   new AdminReplyController(),
   new PaymentController(),
+  new AccountController(),
   new AdminAuthenticationController(),
   new AdminAccountController(),
   new AdminStatisticController(),
   new AdminProductController(),
   new AdminReceiptController(),
+  new AdminWarehouseController(),
 ], PORT as string);
 
 app.listen();
