@@ -42,8 +42,8 @@ export class Client {
         return RefreshToken.fromData(refresh);
       })
       : null;
-    client.receipts = data.receipt
-      ? data.receipt.map((receipt: any): Receipt => {
+    client.receipts = data.receipts
+      ? data.receipts.map((receipt: any): Receipt => {
         return Receipt.fromData(receipt);
       })
       : null;
