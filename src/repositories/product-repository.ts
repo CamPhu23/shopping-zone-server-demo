@@ -95,7 +95,7 @@ export class ProductRepository extends BaseRepository {
   }
 
   async countAll(): Promise<Number | 0> {
-    return await ProductModel.countDocuments({});
+    return await ProductModel.countDocuments({ isDelete: false });
   }
 
   async deleteProduct(id: string): Promise<Product | any> {
