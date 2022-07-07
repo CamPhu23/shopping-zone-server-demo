@@ -13,7 +13,7 @@ export class CommentRepository extends BaseRepository {
 
   async getAll(): Promise<any> {
     return await CommentModel
-      .find({}, "id content name replyTo updatedAt")
+      .find({isMarked: false}, "id content name replyTo updatedAt")
       .populate("product", "id name");
   }
 

@@ -58,4 +58,16 @@ export class WarehouseRepository extends BaseRepository {
   deleteWarehousesByProductID(productID: string): void {
     WarehouseModel.deleteMany({ product: productID });
   }
+
+  async importProduct(product: any): Promise<any> {
+    WarehouseModel.findOneAndUpdate({
+      "product": { _id: product.id },
+      "color": product.color,
+      "size": product.size,
+    },
+      { $inc: { "quantity": product.quantity } },
+      { upsert: true, new: true }, (err, product) => {
+        console.log(err);
+      });
+  }
 }
