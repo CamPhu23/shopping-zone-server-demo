@@ -21,7 +21,7 @@ class AdminStatsticController extends BaseController {
     response: express.Response
   ): Promise<any> {
     let res: ResponseData;
-    
+
     try {
       res = await adminStatisticService.getReceiptsClientsProductsStatistic();
     }

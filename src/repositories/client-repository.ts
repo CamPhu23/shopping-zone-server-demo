@@ -45,10 +45,10 @@ export class ClientRepository extends BaseRepository {
 
     return client ? Client.fromData(client) : null;
   };
-  
+
   async updateInforUserById(id: string, fullname: string, email: string, phone: string, address: string): Promise<Client | null> {
-    const updateInforUser = await ClientModel.findByIdAndUpdate(id, 
-        {fullname: fullname, email: email, phone: phone, address: address}, { new: true }
+    const updateInforUser = await ClientModel.findByIdAndUpdate(id,
+      { fullname: fullname, email: email, phone: phone, address: address }, { new: true }
     );
 
     return updateInforUser ? Client.fromData({
@@ -59,17 +59,6 @@ export class ClientRepository extends BaseRepository {
       address: updateInforUser.address
     }) : null;
   };
-
-  async getClientById(id: string): Promise<Client | null> {
-    const client = await ClientModel.findById(id);
-    return client ? Client.fromData({
-      id: id,
-      fullname: client.fullname,
-      email: client.email,
-      phone: client.phone,
-      address: client.address   
-  }) : null;
-  }
 
   async countAll(): Promise<Number | 0> {
     return await ClientModel.countDocuments({ isDelete: false });
