@@ -39,7 +39,7 @@ export class AdminProductService {
 
     // delete image
     imageRepository.deleteImages(deletedImageIDs);
-    
+
     // save new images and update product
     let newImages = await imageRepository.saveImages(product.images);
     product.images = newImages;

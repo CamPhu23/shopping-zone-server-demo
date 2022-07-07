@@ -8,6 +8,7 @@ interface Irating {
     rate: number;
     product: Types.ObjectId;
     receipt: Types.ObjectId;
+    client: Types.ObjectId;
 }
 
 interface RatingResponse {
@@ -20,12 +21,13 @@ export class Rating {
     rate: number;
     product: Product | null;
     receipt: Receipt | null;
+    client: Client | null
     static fromData(data: any): Rating {
         const rating = new Rating();
         rating.id = data.id as string;
         rating.rate = data.rate;
         rating.product = data.product ? Product.fromData(data.product) : null;
-        rating.receipt = data.receipt ? Receipt.fromData(data.receipt) : null;
+        rating.receipt = data.receipts ? Receipt.fromData(data.receipts) : null;
         return rating;
     }
 
@@ -56,6 +58,12 @@ const schema = new Schema<Irating>({
     receipt: {
         type: Schema.Types.ObjectId,
         ref: "receipts",
+        required: true
+    },
+
+    client: {
+        type: Schema.Types.ObjectId,
+        ref: "clients",
         required: true
     }
 })

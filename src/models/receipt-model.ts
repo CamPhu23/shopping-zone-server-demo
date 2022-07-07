@@ -17,6 +17,7 @@ interface IReceipt {
   totalDiscount: number;
   totalBill: number;
   ratings: Types.ObjectId[];
+  client: Types.ObjectId;
   status: string;
   deliveryAt: Date;
   createdAt: Date;
@@ -63,6 +64,7 @@ export class Receipt {
   totalDiscount: number;
   totalBill: number;
   ratings: Rating[];
+  client: Client;
   status: string;
   deliveryAt: Date;
   createdAt: Date;
@@ -84,6 +86,7 @@ export class Receipt {
     receipt.shippingCost = data.shippingCost;
     receipt.totalDiscount = data.totalDiscount;
     receipt.totalBill = data.totalBill;
+    receipt.client = Client.fromData(data.client) || null;
     receipt.status = data.status
     receipt.deliveryAt = data.deliveryAt;
     receipt.createdAt = data.createdAt;
@@ -184,6 +187,12 @@ const schema = new Schema<IReceipt>({
     ref: "ratings",
     required: true
   }],
+  
+  client: {
+    type: Schema.Types.ObjectId,
+    ref: "clients",
+    required: true
+  },
 }, { timestamps: true});
 
 export const ReceiptModel = model<IReceipt>("receipts", schema);
