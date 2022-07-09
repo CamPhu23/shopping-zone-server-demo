@@ -48,11 +48,11 @@ const ResetPasswordTemplate = (reset_password_url: string) => {
                                                 style="display:inline-block; vertical-align:middle; margin:29px 0 26px; border-bottom:1px solid #cecece; width:100px;"></span>
                                             <br>
                                             <a href="${reset_password_url}" target="_blank"
-                                                style="background:#20e277;text-decoration:none !important; font-weight:500; margin-top:15px; color:#fff;text-transform:uppercase; font-size:14px; padding:10px 24px;display:inline-block; border-radius:50px;">Đặt lại mật khẩu
+                                                style="background:#10b981;text-decoration:none !important; font-weight:500; margin-top:15px; color:#fff;text-transform:uppercase; font-size:14px; padding:10px 24px;display:inline-block; border-radius:50px;">Đặt lại mật khẩu
                                             </a>
                                             
                                             <p style="color:#455056; font-size:15px;line-height:24px; margin-top:15px; text-align:justify;">
-                                            Để đặt lại mật khẩu, bạn bấm vào liên kết dưới đây và làm theo hướng dẫn.
+                                            Nếu nút đặt lại mật khẩu không hoạt động hãy bấm vào đường link sau.
                                             Liên kết sẽ hết hạn trong 5 phút: 
                                                 <a href="${reset_password_url}" target="_blank">Đặt lại mật khẩu</a>
                                             </p>

@@ -28,6 +28,18 @@ export class ClientRepository extends BaseRepository {
     const client = await ClientModel.findOne({email, isDelete: false});
     return client ? Client.fromData(client) : null;
   }
+  
+  // forgot password
+  async getClientByEmail(email: string): Promise<Client | null> {
+    const client = await ClientModel.findOne({ email, isDelete: false });
+    return client ? Client.fromData(client) : null;
+  }
+
+  // Change password through email
+  async resetPassword(email: string, password: string): Promise<Client | null> {
+    const saveNewPassword = await ClientModel.findOneAndUpdate({ email: email }, { password: password }, { new: true })
+    return saveNewPassword ? Client.fromData(saveNewPassword) : null;
+  }
 
   // Change password through email
   async resetPassword(email: string, password: string): Promise<Client | null>{

@@ -8,7 +8,6 @@ import moment = require("moment");
 import nodemailer = require("nodemailer");
 import ResetPasswordTemplate from '../template/reset-password-mail';
 
-
 const ACCESS_TOKEN_EXPIRED_IN_TIME = 60 * 5; //5 Mins
 const REFRESH_TOKEN_EXPIRED_IN_TIME = 60 * 60 * 24 * 3; //3 Days
 
@@ -138,10 +137,10 @@ export class AuthService {
       const token = jwt.sign(payload, process.env.JWT_RESET_PASSWORD_TOKEN_SECRET_KEY as string, {algorithm: "HS256", expiresIn: 60*5})
       // console.log(token)
 
-      const reset_password_url = `http://localhost:8000/auth/reset-password/${token}`
-      console.log(reset_password_url)
+      let url = process.env.ENVIRONMENT == 'development' ? process.env.REACT_APP_BASE_CLIENT_DEV : process.env.REACT_APP_BASE_CLIENT_PRO;
+      const reset_password_url = url + "/reset-password/" + token;
 
-      // Create sending reset password link through email
+      // create sending reset password link through email
       // create reusable transporter object using the default SMTP transport
       let transporter = nodemailer.createTransport({
         host: "smtp.ethereal.email",
@@ -155,57 +154,32 @@ export class AuthService {
     
       // send mail with defined transport object
       let info = await transporter.sendMail({
-        from: '"Huy Phú" <huyphu@gmail.com>', // sender address
+        from: '"Shopping Zone" <shopping-zone@gmail.com>', // sender address
         to: `${client.email}`, // list of receivers
-        subject: "Reset password link", // Subject line
+        subject: "Yêu cầu thay đổi mật khẩu", // Subject line
         html: ResetPasswordTemplate(reset_password_url),
       });
-      // <b>${reset_password_url}</b>
       // Preview only available when sending through an Ethereal account
       console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-      // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-
 
       return( this.response = {
         status: ResultCode.SUCCESS,
       })
     }
   }
+
   async resetPassword(email: string, password: string): Promise<ResponseData>{
     const hashedPassword = await bcryptjs.hash(password, 12);
-    const newResetpassword = await clientRepository.resetPassword(email, hashedPassword);
-    return newResetpassword
+    const newClient = await clientRepository.resetPassword(email, hashedPassword);
+    return newClient
     ?(this.response = {
-      status: ResultCode.SUCCESS
+      status: ResultCode.SUCCESS,
+      result: newClient
     })
     :(this.response = {
       status: ResultCode.FAILED,
       message: "Fail to reset password"   
     })
-    // try {
-    //   const hashedPassword = await bcryptjs.hash(password, 12);
-    //   const newResetpassword = await clientRepository.resetPassword(email, hashedPassword);
-    //   return newResetpassword
-    //   ?(this.response = {
-    //     status: ResultCode.SUCCESS
-    //   })
-    //   :(this.response = {
-    //     status: ResultCode.FAILED,
-    //     message: "Fail to reset password"   
-    //   })
-    // } catch (error: any) {
-    //     const { message, code } = error;
-
-    //     return code == 11000 //code = 11000 it's mean mongoose throw duplicated error
-    //       ? (this.response = {
-    //           status: ResultCode.BAD_INPUT_DATA,
-    //           message: "Username or email already exist",
-    //         })
-    //       : (this.response = {
-    //           status: ResultCode.FAILED,
-    //           message: message || "Undefined error",
-    //         });
-    // }
   }
 
   private generateToken(client: Client): Token {

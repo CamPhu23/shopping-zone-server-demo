@@ -6,3 +6,4 @@ export const SERVER_ERROR = 500;
 export const PRECONDITION_FAILED = 412;
 export const CREATED = 201;
 export const OK = 200;
+export const GONE = 410;
