@@ -1,68 +1,172 @@
 import { Schema, model, Types } from "mongoose";
+import { type } from "os";
+import { Image, Warehouse } from ".";
+import { Comment } from "./comment-model";
+import { ImageWithoutProduct } from "./image-model";
+import { Rating } from "./rating-model";
 
 interface IProduct {
-  name: string,
-  description: string,
-  price: number,
-  visible: boolean,
-  isDelete: boolean,
-  // productType: Types.ObjectId
-}
-
-
-export class Product {
-  id: Types.ObjectId;
   name: string;
   description: string;
   price: number;
-  visible: boolean;
   isDelete: boolean;
+  discount: number;
+  category: string;
+  tags: string[];
+  images: Types.ObjectId[];
+  warehouses: Types.ObjectId[];
+  comments: Types.ObjectId[];
+  ratings: Types.ObjectId[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ProductIntroduce {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  rating: number;
+  image: ImageWithoutProduct;
+}
+
+export class Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  discount: number;
+  category: string;
+  tags: string[];
+  images: Image[];
+  warehouses: Warehouse[] | null;
+  comments: Comment[] | null;
+  ratings: Rating[] | null;
+  isDelete: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 
   static fromData(data: any): Product {
     const product = new Product();
 
-    product.id = data.id;
+    product.id = data.id as string;
     product.name = data.name;
     product.description = data.description;
     product.price = data.price;
-    product.visible = data.visible;
+    product.discount = data.discount;
+    product.category = data.category;
+    product.tags = data.tags;
+    product.createdAt = data.createdAt;
+    product.updatedAt = data.updatedAt;
+
+    product.images = data.images?.map((image: any): Image => {
+      return Image.fromData(image);
+    });
+
+    product.warehouses = data.warehouses
+      ? data.warehouses.map((warehouse: any): Warehouse => {
+        return Warehouse.fromData(warehouse);
+      })
+      : null;
+
+    product.comments = data.comments
+      ? data.comments.map((comment: any): Comment => {
+        return Comment.fromData(comment);
+      })
+      : null;
+
+    product.ratings = data.ratings
+      ? data.ratings.map((ratings: any): Rating => {
+        return Rating.fromData(ratings);
+      })
+      : null;
+
     product.isDelete = data.isDelete;
 
     return product;
   }
-};
 
+  static formatToIntroduce(product: Product): ProductIntroduce {
+    return {
+      id: product.id,
+      category: product.category,
+      name: product.name,
+      price: product.price,
+      rating: Rating.formatProductDetailRes(product.ratings).stars,
+      image: Image.getImageWithoutProduct(product.images[0]),
+    };
+  }
+}
 
 const schema = new Schema<IProduct>({
   name: {
     type: String,
-    required: true
+    required: true,
   },
 
   description: {
     type: String,
-    required: true
+    required: true,
   },
 
   price: {
     type: Number,
-    required: true
-  },
-
-  visible: {
-    type: Boolean,
-    default: true
+    required: true,
   },
 
   isDelete: {
     type: Boolean,
-    default: false
+    default: false,
   },
 
-  // productType: {
-  //   type: Schema.Types.ObjectId,
-  //   ref: 'ProductType'
-  // }
-});
+  discount: {
+    type: Number,
+    default: 0,
+  },
 
-export const ProductModel = model<IProduct>('products', schema);
+  category: {
+    type: String,
+    required: true,
+  },
+
+  tags: [
+    {
+      type: String,
+      required: false,
+    },
+  ],
+
+  images: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "images",
+      required: true,
+    },
+  ],
+
+  warehouses: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "warehouses",
+      required: false,
+    },
+  ],
+
+  comments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "comments",
+      required: false,
+    }
+  ],
+
+  ratings: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "ratings",
+      required: false,
+    },
+  ],
+}, { timestamps: true});
+
+export const ProductModel = model<IProduct>("products", schema);

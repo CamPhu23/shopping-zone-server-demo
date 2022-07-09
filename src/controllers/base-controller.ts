@@ -37,6 +37,9 @@ abstract class BaseController {
         response.status(HttpCode.GONE);
         response.json({ messages: data.message || 'expired' })
         break;
+      case ResultCode.FAILED:
+        response.status(HttpCode.SERVER_ERROR);
+        response.json(data.message || 'server run failed')
       default:
         response.status(HttpCode.SERVER_ERROR);
         response.json({ messages: 'server error' });

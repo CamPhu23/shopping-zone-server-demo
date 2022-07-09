@@ -8,13 +8,13 @@ import moment = require("moment");
 import nodemailer = require("nodemailer");
 import ResetPasswordTemplate from '../template/reset-password-mail';
 
-const ACCESS_TOKEN_EXPIRED_IN_TIME = 60 * 5; //5 Mins
+const ACCESS_TOKEN_EXPIRED_IN_TIME = 60 * 30; //30 Mins
 const REFRESH_TOKEN_EXPIRED_IN_TIME = 60 * 60 * 24 * 3; //3 Days
 
 export class AuthService {
-  private response: ResponseData;
-
   async login(username: string, password: string): Promise<ResponseData> {
+    let res: ResponseData;
+
     const client = await clientRepository.getClientByUsername(username);
     const isMatch = await bcryptjs.compare(
       password,
@@ -22,7 +22,7 @@ export class AuthService {
     );
 
     if (!client || !isMatch) {
-      return (this.response = {
+      return (res = {
         status: ResultCode.NOT_FOUND,
         message: "Username or password is not correct",
       });
@@ -36,7 +36,7 @@ export class AuthService {
       ? true
       : false;
 
-    return (this.response = {
+    return (res = {
       status: saveTokenResult ? ResultCode.SUCCESS : ResultCode.FAILED,
       result: token,
     });
@@ -44,6 +44,8 @@ export class AuthService {
 
   async refreshToken(refreshToken: string): Promise<ResponseData> {
     try {
+      let res: ResponseData;
+
       const payload = jwt.verify(
         refreshToken,
         process.env.JWT_REFRESH_TOKEN_SECRET_KEY as string
@@ -62,24 +64,25 @@ export class AuthService {
             newToken.refreshToken.token
           );
 
-          return (this.response = {
+          return (res = {
             status: ResultCode.SUCCESS,
             result: newToken,
           });
         }
       }
 
-      return (this.response = {
+      return (res = {
         status: ResultCode.FAILED,
         message: "Invalid refresh token",
       });
-    } catch (error: any) {
+    } 
+    catch (error: any) {
       const { message } = error || "Undefined error";
 
-      return (this.response = {
+      return {
         status: ResultCode.FAILED,
         message,
-      });
+      };
     }
   }
 
@@ -88,7 +91,9 @@ export class AuthService {
     username: string,
     password: string
   ): Promise<ResponseData> {
+    let res: ResponseData;
     try {
+
       const hashedPassword = await bcryptjs.hash(password, 12);
       const newClient = await clientRepository.saveClient(
         username,
@@ -97,11 +102,11 @@ export class AuthService {
       );
 
       return newClient
-        ? (this.response = {
+        ? (res = {
             status: ResultCode.SUCCESS,
             result: this.generateToken(newClient),
           })
-        : (this.response = {
+        : (res = {
             status: ResultCode.FAILED,
             message: "An unknown error occurred",
           });
@@ -109,11 +114,11 @@ export class AuthService {
       const { message, code } = error;
 
       return code == 11000 //code = 11000 it's mean mongoose throw duplicated error
-        ? (this.response = {
+        ? (res = {
             status: ResultCode.BAD_INPUT_DATA,
             message: "Username or email already exist",
           })
-        : (this.response = {
+        : (res = {
             status: ResultCode.FAILED,
             message: message || "Undefined error",
           });
@@ -122,9 +127,10 @@ export class AuthService {
 
   // Forgot password function
   async forgotPassword(email: string): Promise<ResponseData>{
+    let res: ResponseData
     const client = await clientRepository.getClientByEmail(email);
     if(!client){
-      return ( this.response = {
+      return ( res = {
         status: ResultCode.NOT_FOUND,
         message: "Email does not exist in the system"
       })
@@ -162,21 +168,23 @@ export class AuthService {
       // Preview only available when sending through an Ethereal account
       console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 
-      return( this.response = {
+      return( res = {
         status: ResultCode.SUCCESS,
       })
     }
   }
 
   async resetPassword(email: string, password: string): Promise<ResponseData>{
+    let res: ResponseData;
     const hashedPassword = await bcryptjs.hash(password, 12);
     const newClient = await clientRepository.resetPassword(email, hashedPassword);
+
     return newClient
-    ?(this.response = {
+    ?(res = {
       status: ResultCode.SUCCESS,
       result: newClient
     })
-    :(this.response = {
+    :(res = {
       status: ResultCode.FAILED,
       message: "Fail to reset password"   
     })
@@ -214,9 +222,6 @@ export class AuthService {
           .format(),
       },
       user: {
-        id: client.id,
-        username: client.username,
-        email: client.email,
         permission: "client",
       },
     };

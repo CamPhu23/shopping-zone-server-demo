@@ -28,7 +28,6 @@ class AuthenticationController extends BaseController {
     response: express.Response
   ): Promise<any> {
     const {username, password} = request.body;
-    console.log({username, password});
     
     const res = await authService.login(username, password);
     super.responseJson(response, res);

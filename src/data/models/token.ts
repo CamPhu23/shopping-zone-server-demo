@@ -2,9 +2,6 @@ export interface Token {
   accessToken: BaseToken,
   refreshToken: BaseToken,
   user: {
-    id: string,
-    username: string,
-    email: string,
     permission: string;
   }
 }
