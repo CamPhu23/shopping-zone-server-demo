@@ -1,5 +1,7 @@
 import express from "express";
+import { ResponseData } from "../data/models";
 import { commentService } from "../services";
+import { ResultCode } from "../utils";
 import BaseController from "./base-controller";
 const mongoose = require('mongoose');
 
@@ -19,14 +21,18 @@ class CommentController extends BaseController {
     request: express.Request,
     response: express.Response
   ): Promise<any> {
-    const { nameOfCustomer, content, productID } = request.body;
-
-    const res = await commentService.addComment(nameOfCustomer, content, productID);
+    let res: ResponseData;
+    try {
+      const { nameOfCustomer, content, productID } = request.body;
+      res = await commentService.addComment(nameOfCustomer, content, productID);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    } 
 
     super.responseJson(response, res);
-
   }
-
 }
 
 export default CommentController;

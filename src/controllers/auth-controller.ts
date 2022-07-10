@@ -1,5 +1,6 @@
 import BaseController from "./base-controller";
 import express from "express";
+import { ResponseData } from "../data/models";
 import { authService } from '../services';
 import jwt from "jsonwebtoken";
 import { ResultCode } from "../utils";
@@ -27,9 +28,16 @@ class AuthenticationController extends BaseController {
     request: express.Request,
     response: express.Response
   ): Promise<any> {
-    const {username, password} = request.body;
-    
-    const res = await authService.login(username, password);
+    let res: ResponseData;
+    try {
+      const {username, password} = request.body;
+      res = await authService.login(username, password);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
+
     super.responseJson(response, res);
   }
 
@@ -37,18 +45,33 @@ class AuthenticationController extends BaseController {
     request: express.Request,
     response: express.Response
   ): Promise<any> {
-    const { email, username, password } = request.body;
-    console.log({ email, username, password });
+    let res: ResponseData;
+    try {
+      const { email, username, password } = request.body;
+      // console.log({ email, username, password });
+      res = await authService.register(email, username, password);  
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
 
-    const res = await authService.register(email, username, password);
     super.responseJson(response, res);
   }
 
   private async refreshToken(
     request: express.Request,
     response: express.Response): Promise<any> {
-    const { token } = request.body;
-    const res = await authService.refreshToken(token);
+    let res: ResponseData;
+    try {
+      const { token } = request.body;
+      res = await authService.refreshToken(token);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
+
     super.responseJson(response, res);
   }
 
@@ -57,9 +80,17 @@ class AuthenticationController extends BaseController {
     request: express.Request,
     response: express.Response
   ): Promise<any> {
-    const { email } = request.body;
+    let res: ResponseData;
+    try {
+      const { email } = request.body;
 
-    const res = await authService.forgotPassword(email);
+      res = await authService.forgotPassword(email);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
+
     super.responseJson(response, res);
   }
 
@@ -68,36 +99,43 @@ class AuthenticationController extends BaseController {
     request: express.Request,
     response: express.Response
   ): Promise<any> {
-    const { newPassword } = request.body;
-    // Get token of link
-    const { token } = request.params;
-    // create interface to cast the data type of email to string
-    interface JWTData {
-      email: string;
-    }
-    let email = '';
+    let res: ResponseData;
+    try {
+      const { newPassword } = request.body;
+      // Get token of link
+      const { token } = request.params;
+      // create interface to cast the data type of email to string
+      interface JWTData {
+        email: string;
+      }
+      let email = '';
+      let error = '';
+      // decode the token
+      jwt.verify(token, process.env.JWT_RESET_PASSWORD_TOKEN_SECRET_KEY as string,
+        async function (err, decodedToken) {
+          if (err) {
+            error = err.name;
+          }
+          if (!err) {
+            email = (decodedToken as JWTData).email;
+          }
+        });
+      // 
+      if (!_.isEmpty(error)) {
+        return super.responseJson(response, {
+          status: ResultCode.GONE,
+          message: "jwt expired",
+        })
+      };
 
-    let error = ''
-    // decode the token
-    jwt.verify(token, process.env.JWT_RESET_PASSWORD_TOKEN_SECRET_KEY as string,
-      async function (err, decodedToken) {
-        if (err) {
-          error = err.name;
-        }
-        if (!err) {
-          email = (decodedToken as JWTData).email;
-        }
-      });
-    // 
-    if (!_.isEmpty(error)) {
-      return super.responseJson(response, {
-        status: ResultCode.GONE,
-        message: "jwt expired",
-      })
+      res = await authService.resetPassword(email, newPassword);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
     }
-
-    const res = await authService.resetPassword(email, newPassword);
-    return super.responseJson(response, res);
+    
+    super.responseJson(response, res);
   }
 }
 

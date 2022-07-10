@@ -39,7 +39,8 @@ abstract class BaseController {
         break;
       case ResultCode.FAILED:
         response.status(HttpCode.SERVER_ERROR);
-        response.json(data.message || 'server run failed')
+        response.json(data.message || 'server run failed');
+        break;
       default:
         response.status(HttpCode.SERVER_ERROR);
         response.json({ messages: 'server error' });

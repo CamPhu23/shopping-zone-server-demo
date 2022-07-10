@@ -1,6 +1,8 @@
 import express from "express";
 import { adminProductService } from "../../services";
 import BaseController from "../base-controller";
+import { ResponseData } from "../../data/models";
+import { ResultCode } from "../../utils";
 
 class AdminProductController extends BaseController {
   private path = "/admin/products";
@@ -21,8 +23,14 @@ class AdminProductController extends BaseController {
   private async getAllProducts(
     request: express.Request,
     response: express.Response): Promise<any> {
-
-    const res = await adminProductService.getAllProducts();
+    let res: ResponseData;
+    try {
+      res = await adminProductService.getAllProducts();
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
 
     super.responseJson(response, res);
   }
@@ -30,10 +38,15 @@ class AdminProductController extends BaseController {
   private async createProduct(
     request: express.Request,
     response: express.Response): Promise<any> {
-
-    const product = request.body;
-    
-    const res = await adminProductService.createProduct(product);
+    let res: ResponseData;
+    try {
+      const product = request.body;
+      res = await adminProductService.createProduct(product);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
 
     super.responseJson(response, res);
   }
@@ -41,10 +54,16 @@ class AdminProductController extends BaseController {
   private async updateProduct(
     request: express.Request,
     response: express.Response): Promise<any> {
-
-    const product = request.body;
-    const res = await adminProductService.updateProduct(product);
-
+    let res: ResponseData;
+    try {
+      const product = request.body;
+      res = await adminProductService.updateProduct(product);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
+    
     super.responseJson(response, res);
   }
 
@@ -53,9 +72,16 @@ class AdminProductController extends BaseController {
     response: express.Response,
     next: express.NextFunction
   ): Promise<any>{
-    const {id} = request.params;
+    let res: ResponseData;
+    try {
+      const {id} = request.params;
+      res = await adminProductService.getProduct(id);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
 
-    const res = await adminProductService.getProduct(id);
     super.responseJson(response, res);
   }
 
@@ -64,9 +90,16 @@ class AdminProductController extends BaseController {
     response: express.Response,
     next: express.NextFunction
   ): Promise<any>{
-    const {id} = request.params;
-
-    const res = await adminProductService.deleteProduct(id);
+    let res: ResponseData;
+    try {
+      const {id} = request.params;
+      res = await adminProductService.deleteProduct(id);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
+    
     super.responseJson(response, res);
   }
 }

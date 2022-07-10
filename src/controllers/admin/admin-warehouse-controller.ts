@@ -1,5 +1,8 @@
 import express from "express";
+import { result } from "lodash";
+import { ResponseData } from "../../data/models";
 import { adminWarehouseService } from '../../services';
+import { ResultCode } from "../../utils";
 import BaseController from "../base-controller";
 
 class AdminWarehouseController extends BaseController {
@@ -17,11 +20,16 @@ class AdminWarehouseController extends BaseController {
   private async importProduct(
     request: express.Request,
     response: express.Response): Promise<any> {
-
-    const product = request.body;
-
-    const res = await adminWarehouseService.importProduct(product);
-
+    let res: ResponseData;
+    try {
+      const product = request.body;
+      res = await adminWarehouseService.importProduct(product);     
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
+    
     super.responseJson(response, res);
   }
 }
