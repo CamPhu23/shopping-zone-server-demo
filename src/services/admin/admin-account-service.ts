@@ -9,7 +9,7 @@ export class AdminAccountService {
   async createClient(client: Client): Promise<ResponseData> {
     let res: ResponseData;
     client.password = await bcryptjs.hash(client.password, 12);
-    await clientRepository.saveClient(client);
+    await clientRepository.adminSaveClient(client);
 
     return (res = {
       status: ResultCode.SUCCESS

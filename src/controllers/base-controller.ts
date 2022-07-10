@@ -15,26 +15,34 @@ abstract class BaseController {
         break;
       case ResultCode.BAD_INPUT_DATA:
         response.status(HttpCode.BAD_REQUEST);
-        response.json(data.message || 'bad input');
+        response.json({ messages: data.message || 'bad input' });
         break;
       case ResultCode.NOT_HAVE_PERMISSION:
         response.status(HttpCode.FORBIDDEN);
-        response.json(data.message || 'forbiden');
+        response.json({ messages: data.message || 'forbiden' });
         break;
       case ResultCode.NOT_FOUND:
         response.status(HttpCode.NOT_FOUND);
-        response.json(data.message || 'not found');
+        response.json({ messages: data.message || 'not found' });
         break;
       case ResultCode.NOT_AUTHORIZE:
         response.status(HttpCode.NOT_AUTHORIZED);
-        response.json(data.message || 'not authorize');
+        response.json({ messages: data.message || 'not authorize' });
+        break;
+      case ResultCode.FAILED:
+        response.status(HttpCode.SERVER_ERROR);
+        response.json({ messages: data.message || 'server run failed' })
+        break;
+      case ResultCode.GONE:
+        response.status(HttpCode.GONE);
+        response.json({ messages: data.message || 'expired' })
         break;
       case ResultCode.FAILED:
         response.status(HttpCode.SERVER_ERROR);
         response.json(data.message || 'server run failed')
       default:
         response.status(HttpCode.SERVER_ERROR);
-        response.json('server error');
+        response.json({ messages: 'server error' });
         break;
     }
   }

@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken";
 import bcryptjs = require("bcryptjs");
 import { Client } from "../models";
 import moment = require("moment");
+import nodemailer = require("nodemailer");
+import ResetPasswordTemplate from '../template/reset-password-mail';
 
 const ACCESS_TOKEN_EXPIRED_IN_TIME = 60 * 30; //30 Mins
 const REFRESH_TOKEN_EXPIRED_IN_TIME = 60 * 60 * 24 * 3; //3 Days
@@ -73,7 +75,8 @@ export class AuthService {
         status: ResultCode.FAILED,
         message: "Invalid refresh token",
       });
-    } catch (error: any) {
+    } 
+    catch (error: any) {
       const { message } = error || "Undefined error";
 
       return {
@@ -81,6 +84,110 @@ export class AuthService {
         message,
       };
     }
+  }
+
+  async register(
+    email: string,
+    username: string,
+    password: string
+  ): Promise<ResponseData> {
+    let res: ResponseData;
+    try {
+
+      const hashedPassword = await bcryptjs.hash(password, 12);
+      const newClient = await clientRepository.saveClient(
+        username,
+        email,
+        hashedPassword
+      );
+
+      return newClient
+        ? (res = {
+            status: ResultCode.SUCCESS,
+            result: this.generateToken(newClient),
+          })
+        : (res = {
+            status: ResultCode.FAILED,
+            message: "An unknown error occurred",
+          });
+    } catch (error: any) {
+      const { message, code } = error;
+
+      return code == 11000 //code = 11000 it's mean mongoose throw duplicated error
+        ? (res = {
+            status: ResultCode.BAD_INPUT_DATA,
+            message: "Username or email already exist",
+          })
+        : (res = {
+            status: ResultCode.FAILED,
+            message: message || "Undefined error",
+          });
+    }
+  }
+
+  // Forgot password function
+  async forgotPassword(email: string): Promise<ResponseData>{
+    let res: ResponseData
+    const client = await clientRepository.getClientByEmail(email);
+    if(!client){
+      return ( res = {
+        status: ResultCode.NOT_FOUND,
+        message: "Email does not exist in the system"
+      })
+    }
+    else{
+      const payload = {
+        email: client.email
+      }
+      // Create a link to reset password, expirein: 5m
+      const token = jwt.sign(payload, process.env.JWT_RESET_PASSWORD_TOKEN_SECRET_KEY as string, {algorithm: "HS256", expiresIn: 60*5})
+      // console.log(token)
+
+      let url = process.env.ENVIRONMENT == 'development' ? process.env.REACT_APP_BASE_CLIENT_DEV : process.env.REACT_APP_BASE_CLIENT_PRO;
+      const reset_password_url = url + "/reset-password/" + token;
+
+      // create sending reset password link through email
+      // create reusable transporter object using the default SMTP transport
+      let transporter = nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: 'alfredo.barton55@ethereal.email', // generated ethereal user
+          pass: '8k4F6KqRzb8fNAw9zJ', // generated ethereal password
+        },
+      });
+    
+      // send mail with defined transport object
+      let info = await transporter.sendMail({
+        from: '"Shopping Zone" <shopping-zone@gmail.com>', // sender address
+        to: `${client.email}`, // list of receivers
+        subject: "Yêu cầu thay đổi mật khẩu", // Subject line
+        html: ResetPasswordTemplate(reset_password_url),
+      });
+      // Preview only available when sending through an Ethereal account
+      console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+
+      return( res = {
+        status: ResultCode.SUCCESS,
+      })
+    }
+  }
+
+  async resetPassword(email: string, password: string): Promise<ResponseData>{
+    let res: ResponseData;
+    const hashedPassword = await bcryptjs.hash(password, 12);
+    const newClient = await clientRepository.resetPassword(email, hashedPassword);
+
+    return newClient
+    ?(res = {
+      status: ResultCode.SUCCESS,
+      result: newClient
+    })
+    :(res = {
+      status: ResultCode.FAILED,
+      message: "Fail to reset password"   
+    })
   }
 
   private generateToken(client: Client): Token {
