@@ -48,7 +48,6 @@ class AuthenticationController extends BaseController {
     let res: ResponseData;
     try {
       const { email, username, password } = request.body;
-      // console.log({ email, username, password });
       res = await authService.register(email, username, password);  
     } catch (error) {
       res = {

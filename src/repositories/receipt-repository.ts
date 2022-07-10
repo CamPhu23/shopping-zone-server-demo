@@ -6,7 +6,8 @@ export class ReceiptRepository extends BaseRepository {
   async getAllReceitUserId(id: string, page: number, size: number): Promise<Receipt[] | any> {
     return await ReceiptModel.find({ "client": id },
       "id createdAt paymentMethod totalBill status",
-      { skip: (page - 1) * size, limit: size });
+      { skip: (page - 1) * size, limit: size })
+      .sort({ createdAt: -1});
   }
 
   async getReceitById(id: string): Promise<Receipt | any> {

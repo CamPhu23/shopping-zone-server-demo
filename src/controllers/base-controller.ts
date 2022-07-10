@@ -29,10 +29,6 @@ abstract class BaseController {
         response.status(HttpCode.NOT_AUTHORIZED);
         response.json({ messages: data.message || 'not authorize' });
         break;
-      case ResultCode.FAILED:
-        response.status(HttpCode.SERVER_ERROR);
-        response.json({ messages: data.message || 'server run failed' })
-        break;
       case ResultCode.GONE:
         response.status(HttpCode.GONE);
         response.json({ messages: data.message || 'expired' })

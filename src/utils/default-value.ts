@@ -5,3 +5,4 @@ export const DEFAULT_PRODUCT_COLOR = "trang,den,xanh,xam";
 export const DEFAULT_PRODUCT_SIZE = "S,M,L,XL,XXL";
 export const DEFAULT_PRODUCT_FEATURE = "san-pham-moi,san-pham-ban-chay,san-pham-khuyen-mai";
 export const DEFAULT_PRODUCT_SEARCH = "";
+export const DEFAULT_PRODUCT_SORT = "name_asc";

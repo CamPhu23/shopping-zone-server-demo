@@ -31,7 +31,8 @@ class ProductController extends BaseController {
         color = DefaultValue.DEFAULT_PRODUCT_COLOR,
         size = DefaultValue.DEFAULT_PRODUCT_SIZE,
         feature = DefaultValue.DEFAULT_PRODUCT_FEATURE,
-        search = "",
+        search = DefaultValue.DEFAULT_PRODUCT_SEARCH,
+        sort = DefaultValue.DEFAULT_PRODUCT_SORT,
         p = DefaultValue.DEFAULT_PAGE,
         s = DefaultValue.DEFAULT_SIZE,
       } = request.query;
@@ -42,15 +43,16 @@ class ProductController extends BaseController {
         size.toString(),
         feature.toString(),
         search.toString(),
+        sort.toString(),
         parseInt(p.toString()),
         parseInt(s.toString())
       );
     } catch (error) {
       res = {
         status: ResultCode.FAILED,
-      }
-    }
-    
+      }    
+    }  
+
     super.responseJson(response, res);
   }
 
