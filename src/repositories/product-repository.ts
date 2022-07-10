@@ -15,17 +15,21 @@ export class ProductRepository extends BaseRepository {
     size: string[],
     feature: string[],
     search: string,
+    sort: string,
     p: number,
     s: number
   ): Promise<any> {
     let rawData;
+
+    let sortBy = sort.split("_")[0];
+    let sortDirection = sort.split("_")[1];
 
     if (!_.isEmpty(search)) {
       rawData = await ProductModel.find({
         category: { $in: category },
         tags: { $in: feature },
         isDelete: false,
-        name: { $regex: search }
+        name: { $regex: new RegExp(search, "i") }
       })
         .populate("images", "_id name url publicId")
         .populate("ratings")
@@ -55,6 +59,25 @@ export class ProductRepository extends BaseRepository {
           },
           select: "size color quantity sold",
         });
+    }
+
+    switch (sortBy) {
+      case ("price"):
+        if (sortDirection == "asc") {
+          rawData = rawData.sort((a, b) => a.price - b.price);
+        }
+        else {
+          rawData = rawData.sort((a, b) => b.price - a.price);
+        }
+        break;
+      default:
+        if (sortDirection == "asc") {
+          rawData = rawData.sort((a, b) => a.name.localeCompare(b.name));
+        }
+        else {
+          rawData = rawData.sort((a, b) => b.name.localeCompare(a.name));
+        }
+        break;
     }
 
     const data = rawData.filter((p: any): any => p.warehouses.length > 0);
