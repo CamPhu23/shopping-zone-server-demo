@@ -3,6 +3,7 @@ import { adminProductService } from "../../services";
 import BaseController from "../base-controller";
 import { ResponseData } from "../../data/models";
 import { ResultCode } from "../../utils";
+import { DEFAULT_PAGE, DEFAULT_SIZE } from "../../utils/default-value";
 
 class AdminProductController extends BaseController {
   private path = "/admin/products";
@@ -25,7 +26,9 @@ class AdminProductController extends BaseController {
     response: express.Response): Promise<any> {
     let res: ResponseData;
     try {
-      res = await adminProductService.getAllProducts();
+      const { page = DEFAULT_PAGE, size = DEFAULT_SIZE } = request.query;
+
+      res = await adminProductService.getAllProducts(page as string, size as string);
     } catch (error) {
       res = {
         status: ResultCode.FAILED,

@@ -2,6 +2,7 @@ import express from "express";
 import { ResponseData } from "../../data/models";
 import { adminProductService, adminReceiptService } from "../../services";
 import { ResultCode } from "../../utils";
+import { DEFAULT_PAGE, DEFAULT_SIZE } from "../../utils/default-value";
 import BaseController from "../base-controller";
 
 class AdminReceiptController extends BaseController {
@@ -22,13 +23,15 @@ class AdminReceiptController extends BaseController {
     response: express.Response): Promise<any> {
     let res: ResponseData;
     try {
-      res = await adminReceiptService.getAllReceipts();
+      const { page = DEFAULT_PAGE, size = DEFAULT_SIZE } = request.query;
+    
+      res = await adminReceiptService.getAllReceipts(page as string, size as string);
     } catch (error) {
       res = {
         status: ResultCode.FAILED,
       }
     }
-    
+
     super.responseJson(response, res);
   }
 
@@ -36,10 +39,10 @@ class AdminReceiptController extends BaseController {
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
-  ): Promise<any>{
+  ): Promise<any> {
     let res: ResponseData;
     try {
-      const {id} = request.params;
+      const { id } = request.params;
       res = await adminReceiptService.getReceipt(id);
     } catch (error) {
       res = {
@@ -54,7 +57,7 @@ class AdminReceiptController extends BaseController {
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
-  ): Promise<any>{
+  ): Promise<any> {
     let res: ResponseData;
     try {
       const receipt = request.body;

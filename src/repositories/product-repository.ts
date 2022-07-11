@@ -4,9 +4,11 @@ import { BaseRepository } from "./base-repository";
 const mongoose = require('mongoose');
 
 export class ProductRepository extends BaseRepository {
-  async getAllProducts(): Promise<any> {
+  async getAllProducts(page: number, size: number): Promise<any> {
     return await ProductModel
-      .find({ isDelete: false }, "id name price discount category tags");
+      .find({ isDelete: false }, "id name price discount category tags",
+        { skip: (page - 1) * size, limit: size })
+      .sort({ createdAt: -1 });
   }
 
   async getAllProduct(
@@ -174,5 +176,23 @@ export class ProductRepository extends BaseRepository {
   async deleteComments(ids: string[], productId: string): Promise<any> {
     ProductModel.findByIdAndUpdate({ "_id": productId }, { $pull: { comments: { $in: ids } } },
       (err, product) => { console.log(err); })
+  }
+
+  async getProductByMonthAndYear(): Promise<any> {
+    return await ProductModel.aggregate([
+      {
+        $match: {
+          "isDelete": {
+            $eq: false,
+          },
+        }
+      },
+      {
+        $group: {
+          _id: { $substr: ['$createdAt', 5, 2] },
+          numberofproducts: { $sum: 1 }
+        }
+      }
+    ]);
   }
 }

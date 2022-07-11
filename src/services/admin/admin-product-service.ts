@@ -6,13 +6,25 @@ import { imageRepository, productRepository } from "../../repositories";
 import { ResultCode } from "../../utils";
 
 export class AdminProductService {
-  async getAllProducts(): Promise<ResponseData> {
+  async getAllProducts(page: string, size: string): Promise<ResponseData> {
     let res: ResponseData;
-    const result = await productRepository.getAllProducts();
+
+    let s = parseInt(size);
+    let p = parseInt(page);
+
+    const products = await productRepository.getAllProducts(p, s);
+    const numOfProduct = await productRepository.countAll();
 
     return (res = {
       status: ResultCode.SUCCESS,
-      result
+      result: {
+        products,
+        info: {
+          currentIndex: p,
+          currentSize: s,
+          total: numOfProduct,
+        }
+      }
     })
   }
 

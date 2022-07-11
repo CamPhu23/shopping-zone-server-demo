@@ -2,6 +2,7 @@ import express from "express";
 import { ResponseData } from "../../data/models";
 import { adminAccountService } from '../../services';
 import { ResultCode } from "../../utils";
+import { DEFAULT_PAGE, DEFAULT_SIZE } from "../../utils/default-value";
 import BaseController from "../base-controller";
 
 class AdminAccountController extends BaseController {
@@ -58,8 +59,10 @@ class AdminAccountController extends BaseController {
     request: express.Request,
     response: express.Response): Promise<any> {
     let res: ResponseData;
-    try {
-      res = await adminAccountService.getAllClients();
+    try {      
+      const { page = DEFAULT_PAGE, size = DEFAULT_SIZE } = request.query;
+
+      res = await adminAccountService.getAllClients(page as string, size as string);
     } catch (error) {
       res = {
         status: ResultCode.FAILED,
