@@ -62,12 +62,12 @@ const schema = new Schema<IClient>({
   username: {
     type: String,
     unique: true,
-    required: true,
+    required: false,
   },
 
   password: {
     type: String,
-    required: true,
+    required: false,
   },
 
   email: {

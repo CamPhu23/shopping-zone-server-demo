@@ -8,8 +8,14 @@ import { ResultCode } from "../../utils";
 export class AdminProductService {
   async getAllProducts(page: string, size: string): Promise<ResponseData> {
     let res: ResponseData;
-
-    let s = parseInt(size);
+    
+    let s;
+    if (size != "All") {
+      s = parseInt(size);
+    }
+    else {      
+      s = 100;
+    }
     let p = parseInt(page);
 
     const products = await productRepository.getAllProducts(p, s);

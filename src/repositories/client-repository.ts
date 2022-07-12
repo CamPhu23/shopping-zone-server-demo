@@ -1,6 +1,8 @@
 import { Client, ClientModel, Receipt } from "../models";
 import { BaseRepository } from "./base-repository";
 
+const GOOGLE_USER = "google-user";
+
 export class ClientRepository extends BaseRepository {
   async saveClient(
     username: string,
@@ -14,6 +16,22 @@ export class ClientRepository extends BaseRepository {
         username: saveResult.username,
         email: saveResult.email,
         password: saveResult.password,
+      })
+      : null;
+  }
+
+  async saveGoogleClient(
+    email: string,
+    fullname: string,
+  ): Promise<Client | null> {
+    const saveResult = await ClientModel
+      .create({ email, fullname});
+    return saveResult
+      ? Client.fromData({
+        id: saveResult.id,
+        email: saveResult.email,
+        fullname: saveResult.fullname,
+        username: GOOGLE_USER,
       })
       : null;
   }
