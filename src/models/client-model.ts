@@ -12,6 +12,8 @@ interface IClient {
   isDelete: boolean;
   refreshToken: Types.ObjectId;
   receipts: Types.ObjectId[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export class Client {
@@ -25,6 +27,8 @@ export class Client {
   isDelete: boolean;
   refreshToken: RefreshToken[] | null;
   receipts: Receipt[];
+  createdAt: Date;
+  updatedAt: Date;
 
   static fromData(data: any): Client {
     const client = new Client();
@@ -37,13 +41,15 @@ export class Client {
     client.phone = data.phone || "";
     client.address = data.address || "";
     client.isDelete = data.isDelete || false;
+    client.createdAt = data.createdAt;
+    client.updatedAt = data.updatedAt;
     client.refreshToken = data.refreshToken
       ? data.refreshToken.map((refresh: any): RefreshToken => {
         return RefreshToken.fromData(refresh);
       })
       : null;
-    client.receipts = data.receipts
-      ? data.receipts.map((receipt: any): Receipt => {
+    client.receipts = data.receipt
+      ? data.receipt.map((receipt: any): Receipt => {
         return Receipt.fromData(receipt);
       })
       : null;
@@ -56,12 +62,12 @@ const schema = new Schema<IClient>({
   username: {
     type: String,
     unique: true,
-    required: true,
+    required: false,
   },
 
   password: {
     type: String,
-    required: true,
+    required: false,
   },
 
   email: {
@@ -103,6 +109,6 @@ const schema = new Schema<IClient>({
       ref: "receipts",
     },
   ],
-});
+}, { timestamps: true});
 
 export const ClientModel = model<IClient>("clients", schema);

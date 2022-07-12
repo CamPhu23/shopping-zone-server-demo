@@ -1,6 +1,8 @@
 import { Client, ClientModel, Receipt } from "../models";
 import { BaseRepository } from "./base-repository";
 
+const GOOGLE_USER = "google-user";
+
 export class ClientRepository extends BaseRepository {
   async saveClient(
     username: string,
@@ -10,24 +12,40 @@ export class ClientRepository extends BaseRepository {
     const saveResult = await ClientModel.create({ email, username, password });
     return saveResult
       ? Client.fromData({
-          id: saveResult.id,
-          username: saveResult.username,
-          email: saveResult.email,
-          password: saveResult.password,
-        })
+        id: saveResult.id,
+        username: saveResult.username,
+        email: saveResult.email,
+        password: saveResult.password,
+      })
+      : null;
+  }
+
+  async saveGoogleClient(
+    email: string,
+    fullname: string,
+  ): Promise<Client | null> {
+    const saveResult = await ClientModel
+      .create({ email, fullname});
+    return saveResult
+      ? Client.fromData({
+        id: saveResult.id,
+        email: saveResult.email,
+        fullname: saveResult.fullname,
+        username: GOOGLE_USER,
+      })
       : null;
   }
 
   // forgot password
-  async getClientByEmail(email: string): Promise<Client | null>{
-    const client = await ClientModel.findOne({email, isDelete: false});
+  async getClientByEmail(email: string): Promise<Client | null> {
+    const client = await ClientModel.findOne({ email, isDelete: false });
     return client ? Client.fromData(client) : null;
   }
 
   // Change password through email
-  async resetPassword(email: string, password: string): Promise<Client | null>{
-    const saveNewPassword = await ClientModel.findOneAndUpdate({email: email}, {password: password}, {new: true})
-    return saveNewPassword ? Client.fromData(saveNewPassword): null;
+  async resetPassword(email: string, password: string): Promise<Client | null> {
+    const saveNewPassword = await ClientModel.findOneAndUpdate({ email: email }, { password: password }, { new: true })
+    return saveNewPassword ? Client.fromData(saveNewPassword) : null;
   }
 
   async adminSaveClient(client: Client): Promise<Client | any> {
@@ -43,9 +61,11 @@ export class ClientRepository extends BaseRepository {
       .populate("receipts");
   }
 
-  async getAllClients(): Promise<any> {
+  async getAllClients(page: number, size: number): Promise<any> {
     return await ClientModel
-      .find({ isDelete: false }, "_id username email fullname phone address");
+      .find({ isDelete: false }, "_id username email fullname phone address",
+        { skip: (page - 1) * size, limit: size })
+      .sort({ createdAt: -1 });
   }
 
   async updateClient(client: any): Promise<any> {
@@ -97,4 +117,22 @@ export class ClientRepository extends BaseRepository {
       { $push: { receipts: newReceiptId } },
       { new: true }, (err, product) => { });
   };
+
+  async getClientByMonthAndYear(): Promise<any> {
+    return await ClientModel.aggregate([
+      {
+        $match: {
+          "isDelete": {
+            $eq: false,
+          },
+        }
+      },
+      {
+        $group: {
+          _id: { $substr: ['$createdAt', 5, 2] },
+          numberofclients: { $sum: 1 }
+        }
+      }
+    ]);
+  }
 }

@@ -17,12 +17,12 @@ export class CommentRepository extends BaseRepository {
       .populate("product", "id name");
   }
 
-  async saveComment(name: string, productID: string, content: string, replyTo: string | null): Promise<Comment | null> {
+  async saveComment(name: string, productID: string, content: string, replyTo: string | null): Promise<any | null> {
     let productMG = mongoose.Types.ObjectId(productID);
 
     const savereply = await CommentModel.create({ name, content, product: productMG, replyTo });
 
-    return savereply ? Comment.fromData(savereply) : null;
+    return savereply;
   }
 
   async deleteComments(ids: string[]): Promise<any> {

@@ -1,5 +1,7 @@
 import express from "express";
+import { ResponseData } from "../data/models";
 import { paymentService } from "../services";
+import { ResultCode } from "../utils";
 import BaseController from "./base-controller";
 
 class PaymentController extends BaseController {
@@ -11,17 +13,24 @@ class PaymentController extends BaseController {
   }
 
   protected initializeRouters(): void {
-    this.router.post(`${this.path}`, this.postPaymet);
+    this.router.post(`${this.path}`, this.postPayment);
   }
 
-  private async postPaymet(
+  private async postPayment(
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
   ): Promise<any> {
-    let token = request.headers.authorization?.split(" ")[1];
-    const res = await paymentService.makeAPayment(request.body, token as string || "");
-    
+    let res: ResponseData;
+    try {
+      let token = request.headers.authorization?.split(" ")[1];
+      res = await paymentService.makeAPayment(request.body, token as string || "");
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    } 
+
     super.responseJson(response, res);
   }
 }

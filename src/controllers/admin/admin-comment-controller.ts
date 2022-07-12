@@ -1,5 +1,7 @@
 import express from "express";
+import { ResponseData } from "../../data/models";
 import { commentService, replyService } from "../../services";
+import { ResultCode } from "../../utils";
 import BaseController from "../base-controller";
 
 class AdminCommentController extends BaseController {
@@ -22,7 +24,14 @@ class AdminCommentController extends BaseController {
     request: express.Request,
     response: express.Response
   ): Promise<any> {
-    const res = await replyService.getAll();
+    let res: ResponseData;
+    try {
+      res = await replyService.getAll();
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
 
     super.responseJson(response, res);
   }
@@ -31,8 +40,15 @@ class AdminCommentController extends BaseController {
     request: express.Request,
     response: express.Response
   ): Promise<any> {
-    const ids = request.body
-    const res = await replyService.markComment(ids);
+    let res: ResponseData;
+    try {
+      const ids = request.body
+      res = await replyService.markComment(ids);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
 
     super.responseJson(response, res);
   }
@@ -41,10 +57,15 @@ class AdminCommentController extends BaseController {
     request: express.Request,
     response: express.Response
   ): Promise<any> {
-    const { productId, content, replyTo } = request.body;
-
-    // convert string to ObjectId types
-    const res = await replyService.addReply(productId, content, replyTo);
+    let res: ResponseData;
+    try {
+      const { productId, content, replyTo } = request.body;
+      res = await replyService.addReply(productId, content, replyTo);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
 
     super.responseJson(response, res);
   }
@@ -53,8 +74,15 @@ class AdminCommentController extends BaseController {
     request: express.Request,
     response: express.Response
   ): Promise<any> {
-    const { ids, productId } = request.body
-    const res = await replyService.deleteComments(ids, productId);
+    let res: ResponseData;
+    try {
+      const { ids, productId } = request.body
+      res = await replyService.deleteComments(ids, productId);  
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
 
     super.responseJson(response, res)
   }
@@ -63,10 +91,16 @@ class AdminCommentController extends BaseController {
     request: express.Request,
     response: express.Response
   ): Promise<any> {
-    const comment = request.body
-
-    const res = await replyService.editReply(comment);
-
+    let res: ResponseData;
+    try {
+      const comment = request.body
+      res = await replyService.editReply(comment); 
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
+    
     super.responseJson(response, res)
   }
 }

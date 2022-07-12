@@ -6,7 +6,8 @@ export class ReceiptRepository extends BaseRepository {
   async getAllReceitUserId(id: string, page: number, size: number): Promise<Receipt[] | any> {
     return await ReceiptModel.find({ "client": id },
       "id createdAt paymentMethod totalBill status",
-      { skip: (page - 1) * size, limit: size });
+      { skip: (page - 1) * size, limit: size })
+      .sort({ createdAt: -1 });
   }
 
   async getReceitById(id: string): Promise<Receipt | any> {
@@ -29,9 +30,11 @@ export class ReceiptRepository extends BaseRepository {
     return isUpdated.lastErrorObject.updatedExisting;
   }
 
-  async getAllReceipts(): Promise<any> {
+  async getAllReceipts(page: number, size: number): Promise<any> {
     return await ReceiptModel
-      .find({}, "id fullname phone email paymentMethod totalBill status");
+      .find({}, "id fullname phone email paymentMethod totalBill status",
+        { skip: (page - 1) * size, limit: size })
+        .sort({ createdAt: -1 });
   }
 
   async getReceipt(id: string): Promise<any> {
@@ -68,5 +71,16 @@ export class ReceiptRepository extends BaseRepository {
 
   async countAll(): Promise<Number | 0> {
     return await ReceiptModel.countDocuments({});
+  }
+
+  async getReceiptByMonthAndYear(): Promise<any> {
+    return await ReceiptModel.aggregate([
+      {
+        $group: {
+          _id: { $substr: ['$createdAt', 5, 2] },
+          numberofreceipts: { $sum: 1 }
+        }
+      }
+    ]);
   }
 }

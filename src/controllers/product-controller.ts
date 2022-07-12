@@ -24,26 +24,34 @@ class ProductController extends BaseController {
     response: express.Response,
     next: express.NextFunction
   ): Promise<any> {
-
-    const {
-      category = DefaultValue.DEFAULT_PRODUCT_CATEGORY,
-      color = DefaultValue.DEFAULT_PRODUCT_COLOR,
-      size = DefaultValue.DEFAULT_PRODUCT_SIZE,
-      feature = DefaultValue.DEFAULT_PRODUCT_FEATURE,
-      search = "",
-      p = DefaultValue.DEFAULT_PAGE,
-      s = DefaultValue.DEFAULT_SIZE,
-    } = request.query;
-
-    const res = await productService.getAllProduct(
-      category.toString(),
-      color.toString(),
-      size.toString(),
-      feature.toString(),
-      search.toString(),
-      parseInt(p.toString()),
-      parseInt(s.toString())
-    );
+    let res: ResponseData;
+    try {
+      const {
+        category = DefaultValue.DEFAULT_PRODUCT_CATEGORY,
+        color = DefaultValue.DEFAULT_PRODUCT_COLOR,
+        size = DefaultValue.DEFAULT_PRODUCT_SIZE,
+        feature = DefaultValue.DEFAULT_PRODUCT_FEATURE,
+        search = DefaultValue.DEFAULT_PRODUCT_SEARCH,
+        sort = DefaultValue.DEFAULT_PRODUCT_SORT,
+        p = DefaultValue.DEFAULT_PAGE,
+        s = DefaultValue.DEFAULT_SIZE,
+      } = request.query;
+  
+      res = await productService.getAllProduct(
+        category.toString(),
+        color.toString(),
+        size.toString(),
+        feature.toString(),
+        search.toString(),
+        sort.toString(),
+        parseInt(p.toString()),
+        parseInt(s.toString())
+      );
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }    
+    }  
 
     super.responseJson(response, res);
   }
@@ -52,10 +60,17 @@ class ProductController extends BaseController {
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
-  ): Promise<any> {
-    const { id } = request.params;
+  ): Promise<any>{
+    let res: ResponseData;
+    try {
+      const {id} = request.params;
+      res = await productService.getProduct(id);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
 
-    const res = await productService.getProduct(id);
     super.responseJson(response, res);
   }
 }

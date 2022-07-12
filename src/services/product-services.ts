@@ -6,12 +6,12 @@ import { productRepository } from '../repositories';
 import { ResultCode } from '../utils';
 
 export class ProductService {
-  async getAllProduct(category: string, color: string, size: string, feature: string, search: string, p: number, s: number): Promise<any> {
+  async getAllProduct(category: string, color: string, size: string, feature: string, search: string, sort: string,p: number, s: number): Promise<any> {
     const queryCategory = category.split(",");
     const queryColor = color.split(",");
     const querySize = size.split(",");
     const queryFeature = feature.split(",");
-    const queryData = await productRepository.getAllProduct(queryCategory, queryColor, querySize, queryFeature, search, p, s);
+    const queryData = await productRepository.getAllProduct(queryCategory, queryColor, querySize, queryFeature, search, sort, p, s);
     const result: ResponseData = {
       status: ResultCode.SUCCESS,
       result: {

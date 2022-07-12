@@ -24,7 +24,6 @@ class AdminAuthenticationController extends BaseController {
     let res: ResponseData;
     try {
       const { username, password } = request.body;
-
       res = await adminAuthService.login(username, password);
     }
     catch (e) {
@@ -38,9 +37,17 @@ class AdminAuthenticationController extends BaseController {
 
   private async refreshToken(
     request: express.Request,
-    response: express.Response): Promise<any> {
-    const { token } = request.body;
-    const res = await adminAuthService.refreshToken(token);
+    response: express.Response
+  ): Promise<any> {
+    let res: ResponseData;
+    try {
+      const { token } = request.body;
+      res = await adminAuthService.refreshToken(token);
+    } catch (e) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
     super.responseJson(response, res);
   }
 }

@@ -1,5 +1,8 @@
 import express from "express";
+import { ResponseData } from "../../data/models";
 import { adminAccountService } from '../../services';
+import { ResultCode } from "../../utils";
+import { DEFAULT_PAGE, DEFAULT_SIZE } from "../../utils/default-value";
 import BaseController from "../base-controller";
 
 class AdminAccountController extends BaseController {
@@ -23,10 +26,15 @@ class AdminAccountController extends BaseController {
   private async createClient(
     request: express.Request,
     response: express.Response): Promise<any> {
-
-    const account = request.body;
-
-    const res = await adminAccountService.createClient(account);
+    let res: ResponseData;
+    try {
+      const account = request.body;
+      res = await adminAccountService.createClient(account);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
 
     super.responseJson(response, res);
   }
@@ -34,8 +42,15 @@ class AdminAccountController extends BaseController {
   private async getAdminInfo(
     request: express.Request,
     response: express.Response): Promise<any> {
-    let token = request.headers.authorization?.split(" ")[1];
-    const res = await adminAccountService.getUsernameByToken(token || "");
+    let res: ResponseData;
+    try {
+      let token = request.headers.authorization?.split(" ")[1];
+      res = await adminAccountService.getUsernameByToken(token || "");
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
 
     super.responseJson(response, res);
   }
@@ -43,8 +58,16 @@ class AdminAccountController extends BaseController {
   private async getAllClients(
     request: express.Request,
     response: express.Response): Promise<any> {
+    let res: ResponseData;
+    try {      
+      const { page = DEFAULT_PAGE, size = DEFAULT_SIZE } = request.query;
 
-    const res = await adminAccountService.getAllClients();
+      res = await adminAccountService.getAllClients(page as string, size as string);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
 
     super.responseJson(response, res);
   }
@@ -54,9 +77,16 @@ class AdminAccountController extends BaseController {
     response: express.Response,
     next: express.NextFunction
   ): Promise<any> {
-    const { id } = request.params;
+    let res: ResponseData;
+    try {
+      const { id } = request.params;
+      res = await adminAccountService.getClient(id);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }  
 
-    const res = await adminAccountService.getClient(id);
     super.responseJson(response, res);
   }
 
@@ -65,19 +95,32 @@ class AdminAccountController extends BaseController {
     response: express.Response,
     next: express.NextFunction
   ): Promise<any> {
-    const { id } = request.params;
+    let res: ResponseData;
+    try {
+      const { id } = request.params;
+      res = await adminAccountService.deleteClient(id);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }  
 
-    const res = await adminAccountService.deleteClient(id);
     super.responseJson(response, res);
   }
 
   private async updateClient(
     request: express.Request,
     response: express.Response): Promise<any> {
-
-    const client = request.body;
-    const res = await adminAccountService.updateClient(client);
-
+    let res: ResponseData;
+    try {
+      const client = request.body;
+      res = await adminAccountService.updateClient(client);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }  
+    
     super.responseJson(response, res);
   }
 }
