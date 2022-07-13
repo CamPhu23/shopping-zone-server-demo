@@ -16,6 +16,7 @@ class AuthenticationController extends BaseController {
 
   protected initializeRouters(): void {
     this.router.post(`${this.path}/login`, this.login);
+    this.router.post(`${this.path}/google-login`, this.googleLogin);
     this.router.post(`${this.path}/register`, this.register);
     this.router.post(`${this.path}/refresh-token`, this.refreshToken);
     // Forgot password router
@@ -32,6 +33,24 @@ class AuthenticationController extends BaseController {
     try {
       const {username, password} = request.body;
       res = await authService.login(username, password);
+    } catch (error) {
+      res = {
+        status: ResultCode.FAILED,
+      }
+    }
+
+    super.responseJson(response, res);
+  }
+
+  private async googleLogin(
+    request: express.Request,
+    response: express.Response
+  ): Promise<any> {
+    let res: ResponseData;
+    try {
+      const {email, fullname} = request.body;
+      
+      res = await authService.googleLogin(email, fullname);
     } catch (error) {
       res = {
         status: ResultCode.FAILED,

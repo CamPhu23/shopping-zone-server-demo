@@ -3,6 +3,7 @@ import { adminProductService } from "../../services";
 import BaseController from "../base-controller";
 import { ResponseData } from "../../data/models";
 import { ResultCode } from "../../utils";
+import { DEFAULT_PAGE, DEFAULT_SIZE } from "../../utils/default-value";
 
 class AdminProductController extends BaseController {
   private path = "/admin/products";
@@ -25,7 +26,9 @@ class AdminProductController extends BaseController {
     response: express.Response): Promise<any> {
     let res: ResponseData;
     try {
-      res = await adminProductService.getAllProducts();
+      const { page = DEFAULT_PAGE, size = DEFAULT_SIZE } = request.query;
+
+      res = await adminProductService.getAllProducts(page as string, size as string);
     } catch (error) {
       res = {
         status: ResultCode.FAILED,
@@ -63,7 +66,6 @@ class AdminProductController extends BaseController {
         status: ResultCode.FAILED,
       }
     }
-    
     super.responseJson(response, res);
   }
 
@@ -71,10 +73,10 @@ class AdminProductController extends BaseController {
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
-  ): Promise<any>{
+  ): Promise<any> {
     let res: ResponseData;
     try {
-      const {id} = request.params;
+      const { id } = request.params;
       res = await adminProductService.getProduct(id);
     } catch (error) {
       res = {
@@ -89,17 +91,16 @@ class AdminProductController extends BaseController {
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
-  ): Promise<any>{
+  ): Promise<any> {
     let res: ResponseData;
     try {
-      const {id} = request.params;
+      const { id } = request.params;
       res = await adminProductService.deleteProduct(id);
     } catch (error) {
       res = {
         status: ResultCode.FAILED,
       }
     }
-    
     super.responseJson(response, res);
   }
 }

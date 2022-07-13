@@ -3,13 +3,24 @@ import { receiptRepository } from "../../repositories";
 import { ResultCode } from "../../utils";
 
 export class AdminReceiptService {
-  async getAllReceipts(): Promise<ResponseData> {
-    let res: ResponseData;
-    const result = await receiptRepository.getAllReceipts();
+  async getAllReceipts(page: string, size: string): Promise<ResponseData> {
+    let s = parseInt(size);
+    let p = parseInt(page);
 
+    let res: ResponseData;
+    const receipts = await receiptRepository.getAllReceipts(p, s);
+    const numOfReceipt = await receiptRepository.countAll();
+    
     return (res = {
       status: ResultCode.SUCCESS,
-      result
+      result: {
+        receipts,
+        info: {
+          currentIndex: p,
+          currentSize: s,
+          total: numOfReceipt,
+        }
+      }
     })
   }
 
