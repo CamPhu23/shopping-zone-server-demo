@@ -4,7 +4,7 @@ import { ResponseData } from "../data/models";
 import { clientRepository, receiptRepository, warehouseRepository } from "../repositories";
 import { ResultCode } from "../utils";
 import { colorConverter } from "../utils/color-converter";
-import receiptService from "./services mail/receipt-service"
+import receiptService from "./mail/receipt-service"
 
 export class PaymentService {
   async makeAPayment(paymentInfo: object, token: string): Promise<ResponseData> {
