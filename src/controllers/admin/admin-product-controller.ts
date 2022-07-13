@@ -66,7 +66,6 @@ class AdminProductController extends BaseController {
         status: ResultCode.FAILED,
       }
     }
-
     super.responseJson(response, res);
   }
 
@@ -102,7 +101,6 @@ class AdminProductController extends BaseController {
         status: ResultCode.FAILED,
       }
     }
-
     super.responseJson(response, res);
   }
 }

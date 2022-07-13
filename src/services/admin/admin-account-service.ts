@@ -42,14 +42,14 @@ export class AdminAccountService {
   }
 
   async getAllClients(page: string, size: string): Promise<ResponseData> {
-    let res: ResponseData;
-
+    let res: ResponseData;    
+    
     let s = parseInt(size);
     let p = parseInt(page);
 
     const clients = await clientRepository.getAllClients(p, s);
     const numOfClient = await clientRepository.countAll();
-
+    
     return (res = {
       status: ResultCode.SUCCESS,
       result: {
@@ -66,7 +66,7 @@ export class AdminAccountService {
   async getClient(id: string): Promise<any> {
     let client = await clientRepository.getClientById(id);
     //client.id = client._id as string;
-
+    
     const result: ResponseData = {
       status: ResultCode.SUCCESS,
       result: client
