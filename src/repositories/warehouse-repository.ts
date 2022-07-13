@@ -60,14 +60,12 @@ export class WarehouseRepository extends BaseRepository {
   }
 
   async importProduct(product: any): Promise<any> {
-    WarehouseModel.findOneAndUpdate({
+    return await WarehouseModel.findOneAndUpdate({
       "product": { _id: product.id },
       "color": product.color,
       "size": product.size,
     },
       { $inc: { "quantity": product.quantity } },
-      { upsert: true, new: true }, (err, product) => {
-        console.log(err);
-      });
+      { upsert: true, new: true });
   }
 }

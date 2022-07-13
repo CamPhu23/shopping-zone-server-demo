@@ -26,7 +26,7 @@ export class ProductRepository extends BaseRepository {
     let sortBy = sort.split("_")[0];
     let sortDirection = sort.split("_")[1];
 
-    if (!_.isEmpty(search)) {
+    if (!_.isEmpty(search) && feature.length !== 3) {
       rawData = await ProductModel.find({
         category: { $in: category },
         tags: { $in: feature },
@@ -44,7 +44,7 @@ export class ProductRepository extends BaseRepository {
           },
           select: "size color quantity sold",
         });
-    } else {
+    } else if (_.isEmpty(search) && feature.length !== 3) {
       rawData = await ProductModel.find({
         category: { $in: category },
         tags: { $in: feature },
@@ -61,6 +61,41 @@ export class ProductRepository extends BaseRepository {
           },
           select: "size color quantity sold",
         });
+    } else {
+      rawData = await ProductModel.find({
+        category: { $in: category },
+        isDelete: false,
+      })
+        .populate("images", "_id name url publicId")
+        .populate("ratings")
+        .populate({
+          path: "warehouses",
+          match: {
+            size: { $in: size },
+            color: { $in: color },
+            quantity: { $gt: 0 },
+          },
+          select: "size color quantity sold",
+        });
+    }
+
+    switch (sortBy) {
+      case ("price"):
+        if (sortDirection == "asc") {
+          rawData = rawData.sort((a, b) => a.price - b.price);
+        }
+        else {
+          rawData = rawData.sort((a, b) => b.price - a.price);
+        }
+        break;
+      default:
+        if (sortDirection == "asc") {
+          rawData = rawData.sort((a, b) => a.name.localeCompare(b.name));
+        }
+        else {
+          rawData = rawData.sort((a, b) => b.name.localeCompare(a.name));
+        }
+        break;
     }
 
     switch (sortBy) {
@@ -194,5 +229,11 @@ export class ProductRepository extends BaseRepository {
         }
       }
     ]);
+  }
+
+  async updateWarehouse(productId: string, warehouseId: string): Promise<any> {
+    ProductModel.findOneAndUpdate({ "_id": productId },
+      { $addToSet: { warehouses: warehouseId } },
+      { new: true }, (err, product) => { console.log(err) });
   }
 }

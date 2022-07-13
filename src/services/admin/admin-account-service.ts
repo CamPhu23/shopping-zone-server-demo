@@ -8,15 +8,29 @@ import bcryptjs = require("bcryptjs");
 export class AdminAccountService {
   async createClient(client: Client): Promise<ResponseData> {
     let res: ResponseData;
-    client.password = await bcryptjs.hash(client.password, 12);
-    await clientRepository.adminSaveClient(client);
+    try {
+      client.password = await bcryptjs.hash(client.password, 12);
+      await clientRepository.adminSaveClient(client);
 
-    return (res = {
-      status: ResultCode.SUCCESS
-    })
+      return (res = {
+        status: ResultCode.SUCCESS
+      })
+
+    } catch (error: any) {
+      const { message, code } = error;
+
+      return code == 11000 //code = 11000 it's mean mongoose throw duplicated error
+        ? (res = {
+          status: ResultCode.BAD_INPUT_DATA,
+          message: "Username or email already exist",
+        })
+        : (res = {
+          status: ResultCode.FAILED,
+          message: message || "Undefined error",
+        });
+    }
   }
 
-  
   async updateClient(product: any): Promise<ResponseData> {
     let res: ResponseData;
 
