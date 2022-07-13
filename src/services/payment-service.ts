@@ -4,6 +4,7 @@ import { ResponseData } from "../data/models";
 import { clientRepository, receiptRepository, warehouseRepository } from "../repositories";
 import { ResultCode } from "../utils";
 import { colorConverter } from "../utils/color-converter";
+import receiptService from "./mail/receipt-service"
 
 export class PaymentService {
   async makeAPayment(paymentInfo: object, token: string): Promise<ResponseData> {
@@ -63,6 +64,9 @@ export class PaymentService {
     (paymentInfo as any).client = account.id;
     const newReceipt = await receiptRepository.saveReceipt(paymentInfo);
     await clientRepository.saveReceipt(newReceipt.id, account.id);
+
+    // send receipt mail
+    receiptService(newReceipt, newReceipt.email);
 
     return (res = {
       status: ResultCode.SUCCESS,
