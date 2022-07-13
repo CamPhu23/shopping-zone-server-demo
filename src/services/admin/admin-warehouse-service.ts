@@ -7,10 +7,11 @@ export class AdminWarehouseService {
     let res: ResponseData;
     
     try {
-      const productDb = await productRepository.getProductByName(product.name);
+      let productDb = await productRepository.getProductByName(product.name);
       product.id = productDb._id;
-
-      warehouseRepository.importProduct(product)
+      
+      let warehouse = await warehouseRepository.importProduct(product);
+      await productRepository.updateWarehouse(productDb._id, warehouse._id);
 
       return (res = {
         status: ResultCode.SUCCESS,
@@ -18,7 +19,7 @@ export class AdminWarehouseService {
     }
     catch (err: any) {
       return (res = {
-        status: ResultCode.SUCCESS,
+        status: ResultCode.FAILED,
         message: err.message || ""
       });
     }

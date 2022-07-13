@@ -66,7 +66,7 @@ class AdminProductController extends BaseController {
         status: ResultCode.FAILED,
       }
     }
-    
+
     super.responseJson(response, res);
   }
 
@@ -74,10 +74,10 @@ class AdminProductController extends BaseController {
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
-  ): Promise<any>{
+  ): Promise<any> {
     let res: ResponseData;
     try {
-      const {id} = request.params;
+      const { id } = request.params;
       res = await adminProductService.getProduct(id);
     } catch (error) {
       res = {
@@ -92,17 +92,17 @@ class AdminProductController extends BaseController {
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
-  ): Promise<any>{
+  ): Promise<any> {
     let res: ResponseData;
     try {
-      const {id} = request.params;
+      const { id } = request.params;
       res = await adminProductService.deleteProduct(id);
     } catch (error) {
       res = {
         status: ResultCode.FAILED,
       }
     }
-    
+
     super.responseJson(response, res);
   }
 }
