@@ -14,7 +14,7 @@ export class AdminProductService {
       s = parseInt(size);
     }
     else {      
-      s = 100;
+      s = 1000;
     }
     let p = parseInt(page);
 
@@ -49,7 +49,8 @@ export class AdminProductService {
 
   async updateProduct(product: any): Promise<ResponseData> {
     let res: ResponseData;
-
+    console.log(product);
+    
     // get deleted images
     let deletedImageIDs = product.deletedImages.map(({ id, ...image }: { id: any }) => id);
     let deletedImages = await imageRepository.findImages(deletedImageIDs);
