@@ -5,8 +5,8 @@ import jwt from "jsonwebtoken";
 import bcryptjs = require("bcryptjs");
 import { Client } from "../models";
 import moment = require("moment");
-import nodemailer = require("nodemailer");
-import ResetPasswordTemplate from '../template/reset-password-mail';
+import sendRegistrationMail  from "./mail/registration-service";
+import resetPasswordMail from "./mail/reset-password-service";
 import _ = require("lodash");
 
 const ACCESS_TOKEN_EXPIRED_IN_TIME = 60 * 30; //30 Mins
@@ -141,7 +141,9 @@ export class AuthService {
         email,
         hashedPassword
       );
-
+      // Send notification for successfully register.
+      sendRegistrationMail(email);
+      
       return newClient
         ? (res = {
           status: ResultCode.SUCCESS,
@@ -180,35 +182,9 @@ export class AuthService {
       const payload = {
         email: client.email
       }
-      // Create a link to reset password, expirein: 5m
-      const token = jwt.sign(payload, process.env.JWT_RESET_PASSWORD_TOKEN_SECRET_KEY as string, { algorithm: "HS256", expiresIn: 60 * 5 })
-      // console.log(token)
 
-      let url = process.env.ENVIRONMENT == 'development' ? process.env.REACT_APP_BASE_CLIENT_DEV : process.env.REACT_APP_BASE_CLIENT_PRO;
-      const reset_password_url = url + "/reset-password/" + token;
-
-      // create sending reset password link through email
-      // create reusable transporter object using the default SMTP transport
-      let transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        secure: false, // true for 465, false for other ports
-        auth: {
-          user: 'alfredo.barton55@ethereal.email', // generated ethereal user
-          pass: '8k4F6KqRzb8fNAw9zJ', // generated ethereal password
-        },
-      });
-
-      // send mail with defined transport object
-      let info = await transporter.sendMail({
-        from: '"Shopping Zone" <shopping-zone@gmail.com>', // sender address
-        to: `${client.email}`, // list of receivers
-        subject: "Yêu cầu thay đổi mật khẩu", // Subject line
-        html: ResetPasswordTemplate(reset_password_url),
-      });
-      // Preview only available when sending through an Ethereal account
-      console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-
+      resetPasswordMail(payload.email, payload);
+      
       return (res = {
         status: ResultCode.SUCCESS,
       })
