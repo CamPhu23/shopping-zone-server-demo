@@ -22,28 +22,47 @@ export class ProductRepository extends BaseRepository {
     s: number
   ): Promise<any> {
     let rawData;
-
+    
     let sortBy = sort.split("_")[0];
     let sortDirection = sort.split("_")[1];
 
-    if (!_.isEmpty(search) && feature.length !== 3) {
-      rawData = await ProductModel.find({
-        category: { $in: category },
-        tags: { $in: feature },
-        isDelete: false,
-        name: { $regex: new RegExp(search, "i") }
-      })
-        .populate("images", "_id name url publicId")
-        .populate("ratings")
-        .populate({
-          path: "warehouses",
-          match: {
-            size: { $in: size },
-            color: { $in: color },
-            quantity: { $gt: 0 }
-          },
-          select: "size color quantity sold",
-        });
+    if (!_.isEmpty(search)) {
+      if (feature.length === 3) {
+        rawData = await ProductModel.find({
+          category: { $in: category },
+          isDelete: false,
+          name: { $regex: new RegExp(search, "i") }
+        })
+          .populate("images", "_id name url publicId")
+          .populate("ratings")
+          .populate({
+            path: "warehouses",
+            match: {
+              size: { $in: size },
+              color: { $in: color },
+              quantity: { $gt: 0 }
+            },
+            select: "size color quantity sold",
+          });
+      } else {
+        rawData = await ProductModel.find({
+          category: { $in: category },
+          tags: { $in: feature },
+          isDelete: false,
+          name: { $regex: new RegExp(search, "i") }
+        })
+          .populate("images", "_id name url publicId")
+          .populate("ratings")
+          .populate({
+            path: "warehouses",
+            match: {
+              size: { $in: size },
+              color: { $in: color },
+              quantity: { $gt: 0 }
+            },
+            select: "size color quantity sold",
+          });
+      }
     } else if (_.isEmpty(search) && feature.length !== 3) {
       rawData = await ProductModel.find({
         category: { $in: category },
