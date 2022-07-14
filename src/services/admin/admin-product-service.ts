@@ -2,7 +2,7 @@ import _ from "lodash";
 import { ResponseData } from "../../data/models";
 import { Image, Product, Warehouse } from "../../models";
 import { Rating } from "../../models/rating-model";
-import { imageRepository, productRepository } from "../../repositories";
+import { commentRepository, imageRepository, productRepository } from "../../repositories";
 import { ResultCode } from "../../utils";
 
 export class AdminProductService {
@@ -86,6 +86,7 @@ export class AdminProductService {
   async deleteProduct(id: string): Promise<any> {
 
     imageRepository.deleteImagesByProductID(id);
+    commentRepository.deleteCommentsByProductId(id);
     let product = await productRepository.deleteProduct(id);
 
     const result: ResponseData = {
