@@ -117,28 +117,9 @@ export class ProductRepository extends BaseRepository {
         break;
     }
 
-    switch (sortBy) {
-      case ("price"):
-        if (sortDirection == "asc") {
-          rawData = rawData.sort((a, b) => a.price - b.price);
-        }
-        else {
-          rawData = rawData.sort((a, b) => b.price - a.price);
-        }
-        break;
-      default:
-        if (sortDirection == "asc") {
-          rawData = rawData.sort((a, b) => a.name.localeCompare(b.name));
-        }
-        else {
-          rawData = rawData.sort((a, b) => b.name.localeCompare(a.name));
-        }
-        break;
-    }
-
     const data = rawData.filter((p: any): any => p.warehouses.length > 0);
     const productList = data.slice((p - 1) * s, p * s);
-
+    
     return {
       products: super.parseData(productList, Product),
       total: data.length

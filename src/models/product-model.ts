@@ -26,6 +26,7 @@ export interface ProductIntroduce {
   name: string;
   category: string;
   price: number;
+  discount: number;
   rating: number;
   image: ImageWithoutProduct;
 }
@@ -92,6 +93,7 @@ export class Product {
       category: product.category,
       name: product.name,
       price: product.price,
+      discount: product.discount,
       rating: Rating.formatProductDetailRes(product.ratings).stars,
       image: Image.getImageWithoutProduct(product.images[0]),
     };
