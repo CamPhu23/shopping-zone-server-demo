@@ -30,6 +30,11 @@ export class CommentRepository extends BaseRepository {
       (err) => { console.log(err); })
   }
 
+  async deleteCommentsByProductId(productId: string): Promise<any> {
+    CommentModel.deleteMany({ "product": productId },
+      (err) => { console.log(err); })
+  }
+
   async editComment(comment: any): Promise<Comment | null> {
     const editedComment = await CommentModel
       .findByIdAndUpdate({ "_id": comment.id }, { content: comment.content }, { new: true });
