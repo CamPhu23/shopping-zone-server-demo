@@ -255,4 +255,16 @@ export class ProductRepository extends BaseRepository {
       { $addToSet: { warehouses: warehouseId } },
       { new: true }, (err, product) => { console.log(err) });
   }
+  
+  async updateProductRating(product: string, rating: string): Promise<any> {
+    ProductModel.findOneAndUpdate(
+      { _id: product },
+      {
+        $addToSet: { ratings: rating },
+      },
+      { new: true }, (err, product) => {
+        console.log(err);
+      }
+    );
+  }
 }

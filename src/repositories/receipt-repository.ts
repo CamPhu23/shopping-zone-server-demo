@@ -57,7 +57,7 @@ export class ReceiptRepository extends BaseRepository {
     return newReceipt;
   }
 
-  async updateProductRating(receipt: string, rating: string): Promise<any> {
+  async updateReceiptRating(receipt: string, rating: string): Promise<any> {
     ReceiptModel.findOneAndUpdate(
       { _id: receipt },
       {
