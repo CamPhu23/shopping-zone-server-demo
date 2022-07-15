@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { ResponseData } from "../data/models";
-import { clientRepository, ratingRepository, receiptRepository } from "../repositories";
+import { clientRepository, productRepository, ratingRepository, receiptRepository } from "../repositories";
 import { ResultCode } from "../utils";
 
 export class AccountService {
@@ -11,7 +11,9 @@ export class AccountService {
 
       for await (var data of datas) {
         const rating = await ratingRepository.ratingProduct(data.product, data.rate, data.receipt);
-        await receiptRepository.updateProductRating(data.receipt, rating._id as string);
+        
+        await receiptRepository.updateReceiptRating(data.receipt, rating._id as string);
+        await productRepository.updateProductRating(data.product, rating._id as string);
       }
 
       return this.response = {
